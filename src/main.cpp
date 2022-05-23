@@ -1,5 +1,4 @@
 
-#include <gtest/gtest.h>
 #include "dataIO.h"
 #include "applicationController.h"
 

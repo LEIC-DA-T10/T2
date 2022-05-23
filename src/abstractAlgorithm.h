@@ -13,24 +13,15 @@ using namespace std;
 class abstractAlgorithm {
 protected:
     /**
-     * Request Vector which holds all the requests used in the algorithm
+     * Node Vector which holds all the nodes and routes used in the algorithm
      */
-    vector<request> requests;
-    /**
-     * Truck Vector which holds all the trucks used in the algorithm
-     */
-    vector<truck> trucks;
+    vector<vector<Route>> nodes;
 public:
     /**
-     * Constructor for the abstractAlgorithm class, receives a request and truck vector which are then used to instantiate their respective vectors.
-     * @param requests request vector to use in the algorithm
-     * @param trucks truck vector to use in the algorithm
+     * Constructor for the abstractAlgorithm class, receives a node vector for computing the algorithm.
+     * @param nodes node vector to be used in the algorithm.
      */
-    abstractAlgorithm(const vector<request>& requests,const vector<truck>& trucks);
-    /**
-     * Empty Constructor for the abstract algorithm class, used in the compare option.
-     */
-    abstractAlgorithm();
+    explicit abstractAlgorithm(const vector<vector<Route>>& nodes);
     /**
      * Pure virtual function used to guarantee that any child class also has the compute function.
      */

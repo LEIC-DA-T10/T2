@@ -13,7 +13,6 @@
 #include <cstdlib>
 #include "algorithms/firstScenario.h"
 #include "algorithms/secondScenario.h"
-#include "algorithms/thirdScenario.h"
 
 
 
@@ -43,14 +42,10 @@ private:
      * Computes the second scenario algorithm with the data on the data class.
      */
     void computeSecond();
-    /**
-     * Prints the truck related data present on the data class to either the terminal screen or a file.
-     */
-    void printTruck();
-    /**
-      * Prints the request related data present on the data class to either the terminal screen or a file.
-     */
-    void printRequest();
+
+    void printRoutes();
+
+    static bool checkForEmpty(const vector<vector<Route>> &vector);
 public:
     /**
      * Constructor for the application controller class, initializes the state variable.
@@ -70,7 +65,6 @@ public:
      * Prints the main menu on the terminal screen.
      */
     static void printMainMenu();
-    void printRoutes();
 };
 
 

@@ -56,71 +56,47 @@ void applicationController::readFixed() {
     string newInputPath;
     cout << "Choose which file to read from [1,10]"<< endl;
     cin >> fileIndex;
-    newInputPath = string(INPUT_PATH) + string("in") + fileIndex;
-    data = dataIO(newInputPath);
-    data.readNodes();
-    cout << "---- Finished reading data ----" << endl;
-}
+    newInputPath = string(INPUT_PATH) + string("in") + fileIndex + string("_b.txt");
+    data.setInputPath(newInputPath);
+    if(data.readNodes()){
+        cout << "---- Finished reading data ----" << endl;
+    }
+    else{
+        cout << "------ Error opening file -----" << endl;
+    }
 
-void applicationController::readRandom() {
-    int number;
-    cout << "---- Truck Dataset ----" << endl;
-    cout << "Number of Random Trucks : [1,"<< data.getNumberTrucks() <<"] : " << endl;
-    cin >> number;
-    data.readTrucksRandom(number);
-    cout << "---- Request Dataset ----" << endl;
-    cout << "Number of Random Requests : [1,"<< data.getNumberRequests() <<"] : " << endl;
-    cin >> number;
-    data.readRequestsRandom(number);
-    cout << "---- Finished reading data ----" << endl;
-}
-
-void applicationController::printTruck() {
-    char answer;
-    if(checkForEmpty(data.getTrucks())) return;
-    cout << "Do you want to print the data to a file? (y/n)" << endl;
-    cin >> answer;
-    data.printTrucks(answer);
-}
-
-void applicationController::printRequest() {
-    char answer;
-    if(checkForEmpty(data.getRequests())) return;
-    cout << "Do you want to print the data to a file? (y/n)" << endl;
-    cin >> answer;
-    data.printRequests(answer);
 }
 
 void applicationController::computeFirst() {
-    if(checkForEmpty(data.getRequests()) || checkForEmpty(data.getTrucks())) return;    // Verificacao se vecs vazios
-    firstScenario algorithm(data.getRequests(),data.getTrucks());
+    if(checkForEmpty(data.getNodes())) return;
+    firstScenario algorithm(data.getNodes());
     algorithm.compute();
 }
 
 void applicationController::computeSecond() {
-    if(checkForEmpty(data.getRequests()) || checkForEmpty(data.getTrucks())) return;
-    secondScenario algorithm(data.getRequests(),data.getTrucks());
+    if(checkForEmpty(data.getNodes())) return;
+    secondScenario algorithm(data.getNodes());
     algorithm.compute();
 }
 
-bool applicationController::checkForEmpty(const vector<request>& vector){
+bool applicationController::checkForEmpty(const vector<vector<Route>>& vector){
     if(vector.empty()){
-        cout << "---- ERROR : You must read from Vector dataset before attempting this operation !!! ----" << endl;
-        return true;
-    }
-    return false;
-}
-
-bool applicationController::checkForEmpty(const vector<truck>& vector){
-    if(vector.empty()){
-        cout << "---- ERROR : You must read from the Truck dataset before attempting this operation !!! ----" << endl;
+        cout << "---- ERROR : You must read data before attempting this operation !!! ----" << endl;
         return true;
     }
     return false;
 }
 
 void applicationController::printRoutes() {
+    char answer;
+    if(checkForEmpty(data.getNodes())) return;
+    cout << "Do you want to print the data to a file? (y/n)" << endl;
+    cin >> answer;
+    data.printNodes(answer);
+}
 
+void applicationController::readRandom() {
+    cout << "not yet implemented" << endl;
 }
 
 

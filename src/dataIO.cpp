@@ -25,52 +25,38 @@ vector<string> split (const string& s, const string& delimiter) {
     return res;
 }
 
-dataIO::dataIO(string inputPath) {
-    this->inputPath = std::move(inputPath);
-}
-
-bool dataIO::readTrucksFixed(int start, int finish) {
+bool dataIO::readNodes() {
     fstream file;
     string stringBuffer;
-    int counter = 0;
+    vector<string> splitString;
 
-    file.open(truckPath, ios::in);
-    if(!file) return false;
-
-    for(int i = 0; i <= start; i++){
-        getline(file,stringBuffer);
+    file.open(inputPath, ios::in);
+    if(!file){
+        return false;
     }
 
-    if(!trucks.empty()){
-        for(auto truck : trucks){
-            truck.truckLoad.clear();
-        }
-        trucks.clear();
+    if(!nodes.empty()){
+        nodes.clear();
     }
 
-    while(getline(file,stringBuffer) && counter < (finish-start)){
-        vector<string> splitString = split(stringBuffer," ");
+    //Get First Line
+    getline(file,stringBuffer);
+    splitString = split(stringBuffer," ");
 
-        truck truckBuffer;
-        truckBuffer.maxVolume = stoi(splitString.at(0));
-        truckBuffer.maxWeight = stoi(splitString.at(1));
-        truckBuffer.cost = stoi(splitString.at(2));
-        truckBuffer.availableWeight = truckBuffer.maxWeight;
-        truckBuffer.availableVolume = truckBuffer.maxVolume;
+    numberNodes = stoi(splitString.at(0));
+    numberRoutes = stoi(splitString.at(1));
 
-        trucks.push_back(truckBuffer);
-        counter++;
+    while(getline(file,stringBuffer)){
+        splitString = split(stringBuffer," ");
+        Route routeBuffer;
+        int source = stoi(splitString.at(0));
+        routeBuffer.destination = stoi(splitString.at(1));
+        routeBuffer.capacity = stoi(splitString.at(2));
+        routeBuffer.duration = stoi(splitString.at(3));
+        nodes.at(source).push_back(routeBuffer);
     }
 
     file.close();
-    return true;
-}
-
-
-bool dataIO::readNodes() {
-    fstream file;
-    file.open(inputPath, ios::in);
-    if(!file) return false;
     return true;
 }
 
@@ -109,6 +95,10 @@ void dataIO::printNodes(char answer) {
     }
     if(file) std::cout << "Written to file at : " << NODE_PRINT_PATH << endl;
     std::cout << "----" << endl;
+}
+
+void dataIO::setInputPath(const string &input) {
+    dataIO::inputPath = input;
 }
 
 

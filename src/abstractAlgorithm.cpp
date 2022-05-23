@@ -4,10 +4,7 @@
 
 #include "abstractAlgorithm.h"
 
-abstractAlgorithm::abstractAlgorithm(const vector<request>& requests,const vector<truck>& trucks) {
-    this->requests = requests;
-    this->trucks = trucks;
+abstractAlgorithm::abstractAlgorithm(const vector<vector<Route>>& nodes) {
+    this->nodes = nodes;
 }
-
-abstractAlgorithm::abstractAlgorithm() = default;
 

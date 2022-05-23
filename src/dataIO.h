@@ -24,15 +24,14 @@ private:
      */
     unsigned int numberNodes = 0;
     /**
+     * variable that stores the number of routes read.
+     */
+    unsigned int numberRoutes = 0;
+    /**
      * char array which stores the path where the route data is read from.
      */
     string inputPath;
 public:
-    /**
-     * Constructor for the dataIO class, receives the input file.
-     * @param inputPath route dataset path.
-     */
-    dataIO(string inputPath);
     /**
      * Gets the number of nodes that haven been read.
      * @return returns the number of nodes that are in the node vector.
@@ -55,6 +54,8 @@ public:
     void printNodes(char answer);
 
     bool readNodes();
+
+    void setInputPath(const string &input);
 };
 
 
