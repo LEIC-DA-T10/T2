@@ -52,10 +52,13 @@ void applicationController::printMainMenu(){
 }
 
 void applicationController::readFixed() {
-    int fileIndex;
+    char fileIndex;
+    string newInputPath;
     cout << "Choose which file to read from [1,10]"<< endl;
     cin >> fileIndex;
-    data.readRoutesFixed(fileIndex);
+    newInputPath = string(INPUT_PATH) + string("in") + fileIndex;
+    data = dataIO(newInputPath);
+    data.readNodes();
     cout << "---- Finished reading data ----" << endl;
 }
 

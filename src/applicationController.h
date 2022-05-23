@@ -3,7 +3,7 @@
 //
 
 
-#define TRUCK_PATH "..input/"
+#define INPUT_PATH "../input/"
 
 
 
@@ -26,7 +26,7 @@ private:
     /**
      * Data variable, stores an instantiated dataIO class for reading and outputting data to/from files.
      */
-    dataIO data = dataIO(TRUCK_PATH, REQUEST_PATH);
+    dataIO data;
     /**
      * reads fixed data from the dataset and stores it in the data class.
      */
@@ -40,13 +40,9 @@ private:
      */
     void computeFirst();
     /**
-     * Computes the second scenario algorthm with the data on the data class.
+     * Computes the second scenario algorithm with the data on the data class.
      */
     void computeSecond();
-    /**
-     * Computes the third scenario algorithm with the data on the data class.
-     */
-    void computeThird();
     /**
      * Prints the truck related data present on the data class to either the terminal screen or a file.
      */
@@ -55,18 +51,6 @@ private:
       * Prints the request related data present on the data class to either the terminal screen or a file.
      */
     void printRequest();
-    /**
-     * Checks whether a given request vector is empty or not, and prints out an error message if given vector is indeed empty.
-     * @param vector request vector to check emptiness.
-     * @return returns corresponding boolean to vector emptiness.
-     */
-    static bool checkForEmpty(const std::vector<request> &vector);
-    /**
-     * Checks whether a given request vector is empty or not, and prints out an error message if given vector is indeed empty.
-     * @param truck truck vector to check emptiness.
-     * @return returns corresponding boolean to vector emptiness.
-     */
-    static bool checkForEmpty(const std::vector<truck> &vector);
 public:
     /**
      * Constructor for the application controller class, initializes the state variable.
@@ -86,12 +70,6 @@ public:
      * Prints the main menu on the terminal screen.
      */
     static void printMainMenu();
-    /**
-     * Compares the 2 alternative algorithms for the second scenario.
-     */
-    static void compareSecond();
-    void computeThird_();
-
     void printRoutes();
 };
 
