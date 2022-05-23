@@ -7,18 +7,21 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <map>
 
 #define NODE_PRINT_PATH "../output/nodes.txt"
 
 
 using namespace std;
 
+
+
 class dataIO {
 private:
     /**
      * vector of route vectors, which represents the various nodes, and their respective destinations.
      */
-    vector<vector<Route>> nodes;
+    map<int,vector<Route>> nodes;
     /**
      * variable that stores the number of nodes read.
      */
@@ -41,7 +44,7 @@ public:
      * Gets the vector containing the nodes that haven been read.
      * @return returns the node vector.
      */
-    vector<vector<Route>> getNodes();
+    map<int,vector<Route>> getNodes();
     /**
      * Gets the relative file path for the node dataset.
      * @return returns char array containing the relative file path to the node dataset.

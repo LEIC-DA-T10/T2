@@ -6,6 +6,7 @@
 #define DA_T1_ABSTRACTALGORITHM_H
 
 
+#include <map>
 #include "dataStructs.h"
 
 using namespace std;
@@ -15,13 +16,13 @@ protected:
     /**
      * Node Vector which holds all the nodes and routes used in the algorithm
      */
-    vector<vector<Route>> nodes;
+    map<int,vector<Route>> nodes;
 public:
     /**
      * Constructor for the abstractAlgorithm class, receives a node vector for computing the algorithm.
      * @param nodes node vector to be used in the algorithm.
      */
-    explicit abstractAlgorithm(const vector<vector<Route>>& nodes);
+    explicit abstractAlgorithm(const map<int, vector<Route>> &nodes);
     /**
      * Pure virtual function used to guarantee that any child class also has the compute function.
      */

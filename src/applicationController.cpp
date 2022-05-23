@@ -79,7 +79,7 @@ void applicationController::computeSecond() {
     algorithm.compute();
 }
 
-bool applicationController::checkForEmpty(const vector<vector<Route>>& vector){
+bool applicationController::checkForEmpty(const map<int, vector<Route>> &vector){
     if(vector.empty()){
         cout << "---- ERROR : You must read data before attempting this operation !!! ----" << endl;
         return true;

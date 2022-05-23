@@ -10,7 +10,7 @@
 
 class firstScenario : abstractAlgorithm{
 public:
-    explicit firstScenario(const vector<vector<Route>>& nodes);
+    explicit firstScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
 };
 #endif //DA_T1_FIRSTSCENARIO_H

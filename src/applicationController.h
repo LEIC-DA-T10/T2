@@ -45,7 +45,7 @@ private:
 
     void printRoutes();
 
-    static bool checkForEmpty(const vector<vector<Route>> &vector);
+    static bool checkForEmpty(const map<int, vector<Route>> &vector);
 public:
     /**
      * Constructor for the application controller class, initializes the state variable.

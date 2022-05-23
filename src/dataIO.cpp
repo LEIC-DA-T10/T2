@@ -53,7 +53,16 @@ bool dataIO::readNodes() {
         routeBuffer.destination = stoi(splitString.at(1));
         routeBuffer.capacity = stoi(splitString.at(2));
         routeBuffer.duration = stoi(splitString.at(3));
-        nodes.at(source).push_back(routeBuffer);
+
+        //If node is not yet inserted into map
+        if(nodes.find(source) == nodes.end()){
+            vector<Route> bufferVector;
+            bufferVector.push_back(routeBuffer);
+            nodes.insert(pair<int,vector<Route>>(source,bufferVector));
+        }
+        else{
+            nodes.at(source).push_back(routeBuffer);
+        }
     }
 
     file.close();
@@ -66,7 +75,7 @@ unsigned int dataIO::getNumberNodes() {
     return this->numberNodes;
 }
 
-vector<vector<Route>> dataIO::getNodes() {
+map<int,vector<Route>> dataIO::getNodes() {
     return this->nodes;
 }
 
@@ -78,17 +87,25 @@ void dataIO::printNodes(char answer) {
     fstream file;
     if(answer == 'y'){
         file.open(NODE_PRINT_PATH, ios::out);
+
     }
-    for (int i = 0; i <= numberNodes; i++){
+    if(file){
+        file << "(Destination, Capacity, Duration)" << endl;
+    }
+    else if(answer == 'y'){
+        cout << "(Destination, Capacity, Duration)" << endl;
+    }
+    for (const auto& node : nodes){
         if(file){
-            file << "Node " << i << " : (Destination, Capacity, Duration)" << endl;
-            for(auto route : nodes.at(i)){
+
+            file << "Node " << node.first << " :"<< endl;
+            for(auto route : node.second){
                 file << "   (" << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
             }
         }
         else{
-            cout << "Node " << i << " : (Destination, Capacity, Duration)" << endl;
-            for(auto route : nodes.at(i)) {
+            cout << "Node " << node.first << " :" << endl;
+            for(auto route : node.second) {
                 cout << "   (" << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
             }
         }

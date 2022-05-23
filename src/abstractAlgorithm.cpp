@@ -4,7 +4,7 @@
 
 #include "abstractAlgorithm.h"
 
-abstractAlgorithm::abstractAlgorithm(const vector<vector<Route>>& nodes) {
+abstractAlgorithm::abstractAlgorithm(const map<int, vector<Route>> &nodes) {
     this->nodes = nodes;
 }
 

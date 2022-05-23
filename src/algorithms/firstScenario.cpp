@@ -7,7 +7,7 @@
 #include <climits>
 #include <iostream>
 #include <algorithm>
-firstScenario::firstScenario(const vector<vector<Route>>& nodes) : abstractAlgorithm(nodes){}
+firstScenario::firstScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes){}
 
 //Main Computing Function
 void firstScenario::compute() {

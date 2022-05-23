@@ -6,7 +6,7 @@
 #include "secondScenario.h"
 
 
-secondScenario::secondScenario(const vector<vector<Route>> &nodes) : abstractAlgorithm(nodes) {}
+secondScenario::secondScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes) {}
 
 void secondScenario::compute() {
 
