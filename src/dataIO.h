@@ -9,7 +9,7 @@
 #include <cstring>
 #include <map>
 
-#define NODE_PRINT_PATH "../output/nodes.txt"
+#define NODE_PRINT_PATH "../output/safe_nodes.txt"
 
 
 using namespace std;
@@ -19,11 +19,11 @@ using namespace std;
 class dataIO {
 private:
     /**
-     * vector of route vectors, which represents the various nodes, and their respective destinations.
+     * vector of route vectors, which represents the various safe_nodes, and their respective destinations.
      */
     map<int,vector<Route>> nodes;
     /**
-     * variable that stores the number of nodes read.
+     * variable that stores the number of safe_nodes read.
      */
     unsigned int numberNodes = 0;
     /**
@@ -36,12 +36,12 @@ private:
     string inputPath;
 public:
     /**
-     * Gets the number of nodes that haven been read.
-     * @return returns the number of nodes that are in the node vector.
+     * Gets the number of safe_nodes that haven been read.
+     * @return returns the number of safe_nodes that are in the node vector.
      */
     unsigned int getNumberNodes();
     /**
-     * Gets the vector containing the nodes that haven been read.
+     * Gets the vector containing the safe_nodes that haven been read.
      * @return returns the node vector.
      */
     map<int,vector<Route>> getNodes();
@@ -51,7 +51,7 @@ public:
      */
     string getInputPath();
     /**
-     * Prints the nodes present in the node vector to the terminal or to an external file, depending on the user's answer.
+     * Prints the safe_nodes present in the node vector to the terminal or to an external file, depending on the user's answer.
      * @param answer user's option that determines whether the output is written to the terminal or to an external file.
      */
     void printNodes(char answer);

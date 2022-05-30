@@ -6,7 +6,8 @@
 
 abstractAlgorithm::abstractAlgorithm(const map<int, vector<Route>> &nodes) {
     for(const auto& node : nodes){
-        this->nodes.push_back(node.second);
+        this->safe_nodes.push_back(node.second);
     }
+    finalNode = (int)safe_nodes.size();
 }
 

@@ -16,15 +16,12 @@ bool applicationController::run() {
             readFixed();
             return true;
         case 2:
-            readRandom();
-            return true;
-        case 3:
             computeFirst();
             return true;
-        case 4:
+        case 3:
             computeSecond();
             return true;
-        case 5:
+        case 4:
             printRoutes();
             return true;
         default:
@@ -40,12 +37,11 @@ void applicationController::printMainMenu(){
     cout << "-*-------------  Main Menu  --------------------------*-" << endl;
     cout << " |--> Input: " << endl;
     cout << " |        1 - Fixed input" << endl;
-    cout << " |        2 - Random input" << endl;
     cout << " |--> Computing Scenarios: " << endl;
-    cout << " |        3 - Compute Scenario 1 " << endl;
-    cout << " |        4 - Compute Scenario 2"  << endl;
+    cout << " |        2 - Compute Scenario 1 " << endl;
+    cout << " |        3 - Compute Scenario 2"  << endl;
     cout << " |--> Printing Data: " << endl;
-    cout << " |        5 - Print Routes"<< endl;
+    cout << " |        4 - Print Routes"<< endl;
     cout << " |--> Exit " << endl;
     cout << " |        0 - Exit application "<< endl;
     cout << "-*----------------------------------------------------*-" << endl;
@@ -94,10 +90,5 @@ void applicationController::printRoutes() {
     cin >> answer;
     data.printNodes(answer);
 }
-
-void applicationController::readRandom() {
-    cout << "not yet implemented" << endl;
-}
-
 
 

@@ -64,7 +64,6 @@ bool dataIO::readNodes() {
             nodes.at(source).push_back(routeBuffer);
         }
     }
-
     file.close();
     return true;
 }

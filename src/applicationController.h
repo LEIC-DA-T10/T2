@@ -11,6 +11,7 @@
 #define DA_T1_APPLICATIONCONTROLLER_H
 #include "dataIO.h"
 #include <cstdlib>
+#include <iostream>
 #include "algorithms/firstScenario.h"
 #include "algorithms/secondScenario.h"
 
@@ -30,10 +31,6 @@ private:
      * reads fixed data from the dataset and stores it in the data class.
      */
     void readFixed();
-    /**
-     * reads random data from the dataset and stores it in the data class.
-     */
-    void readRandom();
     /**
      * Computes the first scenario algorithm with the data on the data class.
      */

@@ -14,9 +14,10 @@ using namespace std;
 class abstractAlgorithm {
 protected:
     /**
-     * Node Vector which holds all the nodes and routes used in the algorithm
+     * Node Vector which holds all the safe_nodes and routes used in the algorithm
      */
-    vector<vector<Route>> nodes;
+    vector<vector<Route>> safe_nodes;
+    int finalNode;
 public:
     /**
      * Constructor for the abstractAlgorithm class, receives a node vector for computing the algorithm.
