@@ -99,7 +99,7 @@ stack<int> secondScenario::findPathLazy(int groupSize) {
         if(node_index != finalNode){
             route = checkNode(groupSize, nodes.at(node_index));
             if(route.destination != FAILED_FLAG){
-                cout << route.destination << endl;
+                cout << node_index << "->" << route.destination << endl;
                 path.push(route.destination);
             }
             else{
