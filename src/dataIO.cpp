@@ -111,7 +111,6 @@ void dataIO::printNodes(char answer) {
         }
     }
     if(file) std::cout << "Written to file at : " << NODE_PRINT_PATH << endl;
-    std::cout << "----" << endl;
 }
 
 void dataIO::setInputPath(const string &input) {

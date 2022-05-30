@@ -5,6 +5,8 @@
 #include "abstractAlgorithm.h"
 
 abstractAlgorithm::abstractAlgorithm(const map<int, vector<Route>> &nodes) {
-    this->nodes = nodes;
+    for(const auto& node : nodes){
+        this->nodes.push_back(node.second);
+    }
 }
 
