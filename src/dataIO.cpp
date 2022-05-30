@@ -49,8 +49,8 @@ bool dataIO::readNodes() {
     while(getline(file,stringBuffer)){
         splitString = split(stringBuffer," ");
         Route routeBuffer;
-        int source = stoi(splitString.at(0));
-        routeBuffer.destination = stoi(splitString.at(1));
+        int source = stoi(splitString.at(0))-1;
+        routeBuffer.destination = stoi(splitString.at(1))-1;
         routeBuffer.capacity = stoi(splitString.at(2));
         routeBuffer.duration = stoi(splitString.at(3));
 
