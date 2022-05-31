@@ -140,6 +140,7 @@ stack<int> secondScenario::findPathLazy(int groupSize, vector<vector<Route>> nod
     return path;
 }
 
+
 int secondScenario::checkNode(int groupSize, vector<Route> &node) {
     for(auto & route : node){
         if(groupSize <= route.capacity && !route.visited){
