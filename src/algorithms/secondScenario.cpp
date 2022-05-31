@@ -5,6 +5,7 @@
 
 #include <stack>
 #include "secondScenario.h"
+#include <bits/stdc++.h>
 
 
 secondScenario::secondScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes) {}
@@ -57,16 +58,27 @@ bool secondScenario::run(int state) {
 }
 
 void secondScenario::compute_2_1() {
-    int groupSize;
+    int groupSize,buffer,counter = 1;
+    vector<vector<Route>> nodes = safe_nodes;
+
     cout << "Group Size: " << endl;
     cin >> groupSize;
-    stack<int> path = findPathLazy(groupSize);
-    if(!path.empty()){
-        cout << "Found path" << endl;
-        printPath(path);
-    }
-    else{
-        cout << "Could not find an adequate path for the given group size" << endl;
+    buffer = groupSize;
+
+    while(buffer > 0){
+        stack<int> path = findPathLazy(buffer, nodes);
+        if(!path.empty()){
+            cout << "Found path for subgroup [" << counter << "] with size [" << buffer <<"]"<< endl;
+            vector<int> vectorPath = stackIntoVector(path);
+            printPath(vectorPath);
+            blockPath(nodes, vectorPath, buffer);
+            groupSize -= buffer;
+            buffer = groupSize;
+            counter++;
+        }
+        else{
+            buffer--;
+        }
     }
 }
 
@@ -86,11 +98,10 @@ void secondScenario::compute_2_5() {
 
 }
 
-stack<int> secondScenario::findPathLazy(int groupSize) {
+stack<int> secondScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
     stack<int> path;
     int node_index = 0;
     int route_index;
-    vector<vector<Route>> nodes = safe_nodes;
 
     //insert first node into stack
     path.push(node_index);
@@ -125,18 +136,43 @@ int secondScenario::checkNode(int groupSize, vector<Route> &node) {
     return FAILED_FLAG;
 }
 
-void secondScenario::printPath(stack<int> path){
-    vector<int> reversedPath;
-
-    while(!path.empty()) {
-        reversedPath.push_back(path.top());
-        path.pop();
-    }
-
+void secondScenario::printPath(vector<int> path){
     cout << "(";
-    for(int i = (int)reversedPath.size()-1; i >= 0; i--){
-        cout << reversedPath.at(i);
-        if(i >= 1) cout << "->";
+    for(int i = 0; i < path.size(); i++){
+        cout << path.at(i);
+        if(i < path.size()-1) cout << "->";
     }
     cout << ")" << endl;
 }
+
+vector<int> secondScenario::stackIntoVector(stack<int> stack) {
+    vector<int> vector;
+    while(!stack.empty()) {
+        vector.push_back(stack.top());
+        stack.pop();
+    }
+    reverse(vector.begin(), vector.end());
+    return vector;
+}
+
+void secondScenario::blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize) {
+    int source,destination = 0,index;
+    for(int i = 0; destination != finalNode; i++){
+        source = path.at(i);
+        destination = path.at(i+1);
+        index = checkIfDestination(nodes.at(source),destination);
+        if(index != FAILED_FLAG){
+            nodes.at(source).at(index).capacity -= groupSize;
+        }
+    }
+}
+
+int secondScenario::checkIfDestination(const vector<Route>& node, int destination){
+    for(int i = 0; i < node.size(); i++){
+        if(destination == node.at(i).destination){
+            return i;
+        }
+    }
+    return FAILED_FLAG;
+}
+

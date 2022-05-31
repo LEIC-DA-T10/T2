@@ -19,12 +19,16 @@ private:
     void compute_2_3();
     void compute_2_4();
     void compute_2_5();
-    stack<int> findPathLazy(int groupSize);
-    static void printPath(stack<int> path);
+    stack<int> findPathLazy(int groupSize, vector<vector<Route>> nodes);
+    static void printPath(vector<int> path);
     static int checkNode(int groupSize, vector<Route> &node);
+    static vector<int> stackIntoVector(stack<int> stack);
+    void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
+    static int checkIfDestination(const vector<Route>& node, int destination);
 
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
+
 };
 #endif //DA_T1_SECONDSCENARIO_H
