@@ -60,6 +60,8 @@ bool secondScenario::run(int state) {
 void secondScenario::compute_2_1() {
     int groupSize,buffer,counter = 1;
     vector<vector<Route>> nodes = safe_nodes;
+    vector<vector<int>> paths;
+    vector<int> buffers;
 
     cout << "Group Size: " << endl;
     cin >> groupSize;
@@ -68,9 +70,9 @@ void secondScenario::compute_2_1() {
     while(buffer > 0){
         stack<int> path = findPathLazy(buffer, nodes);
         if(!path.empty()){
-            cout << "Found path for subgroup [" << counter << "] with size [" << buffer <<"]"<< endl;
             vector<int> vectorPath = stackIntoVector(path);
-            printPath(vectorPath);
+            paths.push_back(vectorPath);
+            buffers.push_back(buffer);
             blockPath(nodes, vectorPath, buffer);
             groupSize -= buffer;
             buffer = groupSize;
@@ -78,6 +80,18 @@ void secondScenario::compute_2_1() {
         }
         else{
             buffer--;
+        }
+    }
+
+    if(groupSize > 0){
+        cout << "Could not find a path for the given group size" << endl;
+    }
+    else{
+        int counter_b = 0;
+        for(const auto& path : paths){
+            cout << "Found path for subgroup [" << counter_b+1 << "] with size [" << buffers.at(counter_b) <<"]"<< endl;
+            printPath(path);
+            counter_b++;
         }
     }
 }
