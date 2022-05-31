@@ -21,7 +21,7 @@ private:
     void compute_2_5();
     stack<int> findPathLazy(int groupSize);
     static void printPath(stack<int> path);
-    static Route checkNode(int groupSize, const vector<Route>& node);
+    static int checkNode(int groupSize, vector<Route> &node);
 
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);

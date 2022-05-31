@@ -89,18 +89,18 @@ void secondScenario::compute_2_5() {
 stack<int> secondScenario::findPathLazy(int groupSize) {
     stack<int> path;
     int node_index = 0;
-    Route route;
+    int route_index;
     vector<vector<Route>> nodes = safe_nodes;
 
+    //insert first node into stack
     path.push(node_index);
-
+    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
     while(!path.empty()){
         node_index = path.top();
         if(node_index != finalNode){
-            route = checkNode(groupSize, nodes.at(node_index));
-            if(route.destination != FAILED_FLAG){
-                cout << node_index << "->" << route.destination << endl;
-                path.push(route.destination);
+            route_index = checkNode(groupSize, nodes.at(node_index));
+            if(route_index != FAILED_FLAG){
+                path.push(route_index);
             }
             else{
                 path.pop();
@@ -115,13 +115,14 @@ stack<int> secondScenario::findPathLazy(int groupSize) {
     return path;
 }
 
-Route secondScenario::checkNode(int groupSize, const vector<Route>& node){
-    Route failedRoute;
-    failedRoute.destination = FAILED_FLAG;
-    for(auto route : node){
-        if(route.capacity >= groupSize) return route;
+int secondScenario::checkNode(int groupSize, vector<Route> &node) {
+    for(auto & route : node){
+        if(groupSize <= route.capacity && !route.visited){
+            route.visited = true;
+            return route.destination;
+        }
     }
-    return failedRoute;
+    return FAILED_FLAG;
 }
 
 void secondScenario::printPath(stack<int> path){
