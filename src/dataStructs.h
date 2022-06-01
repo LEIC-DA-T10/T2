@@ -9,6 +9,7 @@ struct Route{
     int capacity = -1;
     int duration = -1;
     bool visited = false;
+    int flow = 0;
 };
 
 #endif //DA_T1_DATASTRUCTS_H

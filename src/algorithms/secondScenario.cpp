@@ -6,6 +6,9 @@
 #include <stack>
 #include "secondScenario.h"
 #include <bits/stdc++.h>
+#include <limits>
+#define FAILED_FLAG -1000
+
 
 
 secondScenario::secondScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes) {}
@@ -101,7 +104,10 @@ void secondScenario::compute_2_2() {
 }
 
 void secondScenario::compute_2_3() {
+    vector<vector<Route>> nodes = safe_nodes;
+    vector<vector<int>> paths;
 
+    computeCapacityFlowGraph(nodes);
 }
 
 void secondScenario::compute_2_4() {
@@ -189,5 +195,88 @@ int secondScenario::checkIfDestination(const vector<Route>& node, int destinatio
         }
     }
     return FAILED_FLAG;
+}
+
+void secondScenario::computeCapacityFlowGraph(vector<vector<Route>> &nodes) {
+    int min = 1;
+
+    while(min > 0){
+        min = calculateAugmentingPath(nodes);
+    }
+}
+
+int secondScenario::calculateAugmentingPath(vector<vector<Route>> &nodes) {
+    stack<int> path;
+    vector<int> pathVector;
+    int minimum = numeric_limits<int>::max(),node_index = 0;
+    pair<int,int> flow_pair;
+
+    //insert first node into stack
+    path.push(node_index);
+    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
+    while(!path.empty()){
+        node_index = path.top();
+        if(node_index != finalNode){
+            flow_pair = checkNodeFlow(nodes.at(node_index));
+            if(flow_pair.first != FAILED_FLAG){
+                path.push(flow_pair.first);
+                minimum = getMin(minimum,flow_pair.second);
+            }
+            else{
+                path.pop();
+            }
+        }
+        else{
+            //Found final node
+            break;
+        }
+    }
+    pathVector = stackIntoVector(path);
+
+
+    if(!pathVector.empty()){
+        cout << "Found Augmenting Path : " << endl;
+        printPath(pathVector);
+        changeFlow(nodes,pathVector,minimum);
+        cout << "Flow increased in path by : " << minimum << endl;
+    }
+    else{
+        minimum = 0;
+    }
+
+    return minimum;
+}
+
+
+pair<int, int> secondScenario::checkNodeFlow(vector<Route> &node) {
+    pair<int, int> returnValue;
+    returnValue.first = FAILED_FLAG;
+    returnValue.second = FAILED_FLAG;
+    for(auto & route : node){
+        if(route.flow < route.capacity && !route.visited){
+            route.visited = true;
+            returnValue.first = route.destination;
+            returnValue.second = (route.capacity-route.flow);
+            return returnValue;
+        }
+    }
+    return returnValue;
+}
+
+int secondScenario::getMin(int value1, int value2) {
+    if(value1 < value2) return value1;
+    return value2;
+}
+
+void secondScenario::changeFlow(vector<vector<Route>> &nodes, const vector<int> &path, const int &value) {
+    int source,destination = 0,index;
+    for(int i = 0; destination != finalNode; i++){
+        source = path.at(i);
+        destination = path.at(i+1);
+        index = checkIfDestination(nodes.at(source),destination);
+        if(index != FAILED_FLAG){
+            nodes.at(source).at(index).flow += value;
+        }
+    }
 }
 
