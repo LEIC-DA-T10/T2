@@ -56,53 +56,64 @@ void firstScenario::compute_1_1() {
     // Stack to store all solutions
     vector<vector<int>> paths = allPaths(nodes);
 
+
     for(auto & path : paths){
         printPath(path);
     }
 }
 
 vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
-    // Source and Destination nodes explicitly;
-    int Source = 0;
-    int Destination = finalNode;
-
-    // Queue to store all paths
-    queue<vector<int>> paths;
-    
     // Vector to store paths that lead to destination
     vector<vector<int>> correctPaths;
-    //Current path
-    vector<int> path;
-    //Adding the source to the initial path
-    path.push_back(Source);
-    //Pushing the path to the path vector
-    paths.push(path);
-    
-    int currentVertex;
-    
-    //Stop only when there's no more paths to compute
-    while(!paths.empty()){
-        path = paths.front();
-        paths.pop();
-        
-        currentVertex = path[path.size()-1];
-        
-        if(currentVertex == Destination){
-            cout << "Encontrado Caminho" << endl;
-            correctPaths.push_back(path);
-        }
+    //Stack to hold the current path
+    stack<int> path;
 
-        for (int i = 0; i < nodes[currentVertex].size(); i++){
-            if (!nodes[currentVertex][i].visited){
-                nodes[currentVertex][i].visited = true;
-                vector<int> newpath(path);
-                newpath.push_back(nodes[currentVertex][i].destination);
-                paths.push(newpath);
+    int node_index = 0;
+    int route_index;
+
+    //insert first node into stack
+    path.push(node_index);
+    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
+    while(!path.empty()){
+        // look for the first node of the path
+        node_index = path.top();
+        //Check if the current node corresponds to the destination
+        if(node_index != finalNode){
+            route_index = checkNode( nodes.at(node_index));
+            if(route_index != FAILED_FLAG){
+                path.push(route_index);
+            }
+            else{
+                //if the path
+                path.pop();
             }
         }
+        else{
+            correctPaths.push_back(stackIntoVector(path));
+            path.pop();
+        }
     }
-
     return correctPaths;
+}
+
+vector<int> firstScenario::stackIntoVector(stack<int> stack) {
+    vector<int> vector;
+    while(!stack.empty()) {
+        vector.push_back(stack.top());
+        stack.pop();
+    }
+    reverse(vector.begin(), vector.end());
+    return vector;
+}
+
+int firstScenario::checkNode(vector<Route> &node) {
+    for(auto & route : node){
+        if(!route.visited){
+            route.visited = true;
+            return route.destination;
+        }
+    }
+    return FAILED_FLAG;
 }
 
 void firstScenario::printPath(vector<int> path){
@@ -113,6 +124,8 @@ void firstScenario::printPath(vector<int> path){
     }
     cout << ")" << endl;
 }
+
+
 
 void firstScenario::compute_1_2() {
 
