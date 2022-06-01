@@ -24,16 +24,6 @@ private:
     static vector<int> stackIntoVector(stack<int> stack);
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
     static int checkIfDestination(const vector<Route>& node, int destination);
-    static int getMin(int value1, int value2);
-    pair<int, vector<int>> computeElephant(vector<vector<Route>> &nodes);
-    static int checkIfContains(const vector<Vertex> &vector, int value);
-    static int overwriteIfExists(vector<Route> & routes, Route newRoute);
-    vector<int> calculateMaximumCapacity(vector<vector<Route>> nodes);
-    //Deprecated
-    void computeCapacityFlowGraph(vector<vector<Route>> &nodes);
-    int calculateAugmentingPath(vector<vector<Route>> &nodes);
-    void changeFlow(vector<vector<Route>> &nodes,const vector<int> &path,const int &value);
-    static pair<int, int> checkNodeFlow(vector<Route> &node);
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
     void compute() override;

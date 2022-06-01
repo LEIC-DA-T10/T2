@@ -38,6 +38,10 @@ public:
 
     int getPathCapacity(vector<Route> &node);
 
-    vector<int> elephant_algorithm(vector<vector<Route>> nodes);
+    pair<int, vector<int>> elephant_algorithm(vector<vector<Route>> nodes);
+    static int checkIfContains(const vector<Vertex> &vector, int value);
+    static int overwriteIfExists(vector<Route> & routes, Route newRoute);
+    static int getMin(int value1, int value2);
+
 };
 #endif //DA_T1_FIRSTSCENARIO_H

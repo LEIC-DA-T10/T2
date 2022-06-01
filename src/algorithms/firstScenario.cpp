@@ -32,42 +32,44 @@ void firstScenario::compute() {
 
 
 void firstScenario::compute_1_1() {
-    // Node List, a copy of the data input
     vector<vector<Route>> nodes = safe_nodes;
-  //  getBestPath(allPaths(nodes),nodes);
-    printPath(elephant_algorithm(nodes));
+    pair<int,vector<int>> output;
+
+    output = elephant_algorithm(nodes);
+
+    cout << "Found Maximum Group Size [" << output.first << "] with the following path: " << endl;
+    printPath(output.second);
 }
 
-vector<int> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
+pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
+    int next,max;
+    pair<int,vector<int>> output;
     vector<int> path;
     vector<Vertex> visited_nodes;
     vector<Route> queueBuffer;
     Vertex current_vertex;
 
-    //Compare Function used for the priority queue, sorts elements by capacity
-    auto compare = [](Route &route1, Route &route2) {
-        return route1.capacity < route2.capacity;
-    };
-
+    //Compare Function used for the prio queue, sorts elements by capacity
+    auto compare = [](Route &route1, Route &route2) { return route1.capacity < route2.capacity;};
     priority_queue<Route,vector<Route>, decltype(compare)> priorityQueue(compare);
 
-    //Add first node routes to priority queue
+    //Add first node routes to prio queue
     current_vertex.index = 0;
     for(auto route : nodes.at(0)){
         priorityQueue.push(route);
     }
 
     while (!priorityQueue.empty()){
-
         current_vertex.source = priorityQueue.top().source;
         current_vertex.index = priorityQueue.top().destination;
         current_vertex.capacity = priorityQueue.top().capacity;
         priorityQueue.pop();
-
         if(current_vertex.index != finalNode){
             for(auto & route : nodes.at(current_vertex.index)){
                 if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
                     route.source = current_vertex.index;
+
+                    route.capacity = getMin(current_vertex.capacity,route.capacity);
 
                     queueBuffer.clear();
                     //Inserting priorityQueue elements into vector Buffer
@@ -89,17 +91,34 @@ vector<int> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
                 }
             }
         }
+        else{
+            visited_nodes.push_back(current_vertex);
+            break;
+        }
         visited_nodes.push_back(current_vertex);
     }
 
 
-    for(auto node : visited_nodes){
-        cout << node.index << "("<<node.capacity <<","<<node.source << ")"<< endl;
+    path.push_back(visited_nodes.back().index);
+    next = visited_nodes.back().source;
+    max = visited_nodes.back().capacity;
+
+    //Insert Path into output vector
+    for(int i = visited_nodes.size() - 1; i >= 0; i--){
+        Vertex node = visited_nodes.at(i);
+        if(node.index == next){
+            path.push_back(node.index);
+            next = node.source;
+        }
     }
 
-    return path;
+    //Add First Node;
+    path.push_back(0);
+    reverse(path.begin(), path.end());
 
-
+    output.first = max;
+    output.second = path;
+    return output;
 }
 
 
@@ -238,4 +257,32 @@ void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct R
     }
 
     printSolution(theChosenOne,maxCapacity);
+}
+
+int firstScenario::checkIfContains(const vector<Vertex> &vector, int value) {
+    int index = 0;
+    for(auto elem : vector){
+        if(elem.index == value) return index;
+        index++;
+    }
+    return FAILED_FLAG;
+}
+
+int firstScenario::overwriteIfExists(vector<Route> &routes, Route newRoute) {
+    int index = 0;
+    for(auto & route : routes){
+        if(route.destination == newRoute.destination){
+            if(route.capacity < newRoute.capacity){
+                route = newRoute;
+            }
+            return index;
+        }
+        index++;
+    }
+    return FAILED_FLAG;
+}
+
+int firstScenario::getMin(int value1, int value2) {
+    if(value1 < value2) return value1;
+    return value2;
 }
