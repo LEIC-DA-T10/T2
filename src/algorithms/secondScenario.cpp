@@ -105,9 +105,9 @@ void secondScenario::compute_2_2() {
 
 void secondScenario::compute_2_3() {
     vector<vector<Route>> nodes = safe_nodes;
-    vector<vector<int>> paths;
+    vector<int> path;
 
-    computeCapacityFlowGraph(nodes);
+    path = computeEdmondsKarp(nodes);
 }
 
 void secondScenario::compute_2_4() {
@@ -247,7 +247,6 @@ int secondScenario::calculateAugmentingPath(vector<vector<Route>> &nodes) {
     return minimum;
 }
 
-
 pair<int, int> secondScenario::checkNodeFlow(vector<Route> &node) {
     pair<int, int> returnValue;
     returnValue.first = FAILED_FLAG;
@@ -278,5 +277,84 @@ void secondScenario::changeFlow(vector<vector<Route>> &nodes, const vector<int> 
             nodes.at(source).at(index).flow += value;
         }
     }
+}
+
+vector<int> secondScenario::computeEdmondsKarp(vector<vector<Route>> &nodes) {
+    vector<int> path;
+    vector<Vertex> visited_nodes;
+    vector<Route> queueBuffer;
+    Vertex current_vertex;
+
+    //Compare Function used for the prio queue, sorts elements by capacity
+    auto compare = [](Route &route1, Route &route2) { return route1.capacity < route2.capacity;};
+    priority_queue<Route,vector<Route>, decltype(compare)> priorityQueue(compare);
+
+    //Add first node routes to prio queue
+    current_vertex.index = 0;
+    for(auto route : nodes.at(0)){
+        priorityQueue.push(route);
+    }
+
+    while (!priorityQueue.empty()){
+        current_vertex.source = priorityQueue.top().source;
+        current_vertex.index = priorityQueue.top().destination;
+        current_vertex.capacity = priorityQueue.top().capacity;
+        priorityQueue.pop();
+        if(current_vertex.index != finalNode){
+            for(auto & route : nodes.at(current_vertex.index)){
+                if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
+                    route.source = current_vertex.index;
+                    queueBuffer.clear();
+                    //Inserting priorityQueue elements into vector Buffer
+                    while(!priorityQueue.empty()){
+                        Route routeBuffer = priorityQueue.top();
+                        priorityQueue.pop();
+                        queueBuffer.push_back(routeBuffer);
+                    }
+
+                    //Check if route destination is already in queue, if it is , overwrite if capacity is larger
+                    if(overwriteIfExists(queueBuffer,route) == FAILED_FLAG){
+                        queueBuffer.push_back(route);
+                    }
+
+                    //Re-insert elements into prio queue
+                    for(auto elem : queueBuffer){
+                        priorityQueue.push(elem);
+                    }
+                }
+            }
+        }
+        visited_nodes.push_back(current_vertex);
+    }
+
+
+    for(auto node : visited_nodes){
+        cout << node.index << "("<<node.capacity <<","<<node.source << ")"<< endl;
+    }
+
+    return path;
+}
+
+int secondScenario::checkIfContains(const vector<Vertex> &vector, int value) {
+    int index = 0;
+    for(auto elem : vector){
+        if(elem.index == value) return index;
+        index++;
+    }
+    return FAILED_FLAG;
+}
+
+int secondScenario::overwriteIfExists(vector<Route> &routes, Route newRoute) {
+    int index = 0;
+    for(auto & route : routes){
+        if(route.destination == newRoute.destination){
+            if(route.capacity < newRoute.capacity){
+                route = newRoute;
+            }
+            return index;
+        }
+        index++;
+    }
+    return FAILED_FLAG;
 }
 

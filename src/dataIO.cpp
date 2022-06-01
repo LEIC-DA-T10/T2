@@ -53,6 +53,7 @@ bool dataIO::readNodes() {
         routeBuffer.destination = stoi(splitString.at(1))-1;
         routeBuffer.capacity = stoi(splitString.at(2));
         routeBuffer.duration = stoi(splitString.at(3));
+        routeBuffer.source = source;
 
         //If node is not yet inserted into map
         if(nodes.find(source) == nodes.end()){
@@ -89,23 +90,23 @@ void dataIO::printNodes(char answer) {
 
     }
     if(file){
-        file << "(Destination, Capacity, Duration)" << endl;
+        file << "(Source, Destination, Capacity, Duration)" << endl;
     }
     else if(answer == 'y'){
-        cout << "(Destination, Capacity, Duration)" << endl;
+        cout << "(Source, Destination, Capacity, Duration)" << endl;
     }
     for (const auto& node : nodes){
         if(file){
 
             file << "Node " << node.first << " :"<< endl;
             for(auto route : node.second){
-                file << "   (" << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
+                file << "   (" << route.source << "," << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
             }
         }
         else{
             cout << "Node " << node.first << " :" << endl;
             for(auto route : node.second) {
-                cout << "   (" << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
+                cout << "   (" << route.source << "," << route.destination << "," << route.capacity << "," << route.duration << ")" << endl;
             }
         }
     }
