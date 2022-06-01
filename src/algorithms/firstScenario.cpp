@@ -118,13 +118,15 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
 }
 
 void firstScenario::compute_1_2() {
-    int buffer = 1;
+
     vector<vector<Route>> nodes = safe_nodes;
     vector<vector<int>> paths;
-    vector<int> buffers;
+
 
     int end = 0;
     int pathsFound = 0;
+    int buffer = 1;
+    int totalPathsFound = 0;
 
     while(end == 0){
         stack<int> path = findPathLazy(buffer, nodes);
@@ -133,6 +135,7 @@ void firstScenario::compute_1_2() {
             paths.push_back(vectorPath);
             blockPath(nodes, vectorPath, buffer);
             pathsFound ++;
+            totalPathsFound++;
         }
         else{
            if (pathsFound == 0){
@@ -148,6 +151,7 @@ void firstScenario::compute_1_2() {
         printPath(path);
         cout << "-*-----*-" << endl;
     }
+    cout << "Found: " << totalPathsFound << " paths";
 }
 
 stack<int> firstScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
