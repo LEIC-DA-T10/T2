@@ -27,14 +27,103 @@ void firstScenario::compute() {
     }
 }
 
-void firstScenario::printOptions(){
-    cout << "-*-------------  Scenario 1  --------------------------*-" << endl;
-    cout << " |--> Computing" << endl;
-    cout << " |        1 - Compute Scenario 1.1 " << endl;
-    cout << " |        2 - Compute Scenario 1.2"  << endl;
-    cout << " |--> Exit " << endl;
-    cout << " |        0 - Exit Scenario "<< endl;
-    cout << "-*----------------------------------------------------*-" << endl;
+
+
+
+
+void firstScenario::compute_1_1() {
+    // Node List, a copy of the data input
+    vector<vector<Route>> nodes = safe_nodes;
+  //  getBestPath(allPaths(nodes),nodes);
+    printPath(elephant_algorithm(nodes));
+}
+
+vector<int> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
+    vector<int> path;
+    vector<Vertex> visited_nodes;
+    vector<Route> queueBuffer;
+    Vertex current_vertex;
+
+    //Compare Function used for the priority queue, sorts elements by capacity
+    auto compare = [](Route &route1, Route &route2) {
+        return route1.capacity < route2.capacity;
+    };
+
+    priority_queue<Route,vector<Route>, decltype(compare)> priorityQueue(compare);
+
+    //Add first node routes to priority queue
+    current_vertex.index = 0;
+    for(auto route : nodes.at(0)){
+        priorityQueue.push(route);
+    }
+
+    while (!priorityQueue.empty()){
+
+        current_vertex.source = priorityQueue.top().source;
+        current_vertex.index = priorityQueue.top().destination;
+        current_vertex.capacity = priorityQueue.top().capacity;
+        priorityQueue.pop();
+
+        if(current_vertex.index != finalNode){
+            for(auto & route : nodes.at(current_vertex.index)){
+                if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
+                    route.source = current_vertex.index;
+
+                    queueBuffer.clear();
+                    //Inserting priorityQueue elements into vector Buffer
+                    while(!priorityQueue.empty()){
+                        Route routeBuffer = priorityQueue.top();
+                        priorityQueue.pop();
+                        queueBuffer.push_back(routeBuffer);
+                    }
+
+                    //Check if route destination is already in queue, if it is , overwrite if capacity is larger
+                    if(overwriteIfExists(queueBuffer,route) == FAILED_FLAG){
+                        queueBuffer.push_back(route);
+                    }
+
+                    //Re-insert elements into prio queue
+                    for(auto elem : queueBuffer){
+                        priorityQueue.push(elem);
+                    }
+                }
+            }
+        }
+        visited_nodes.push_back(current_vertex);
+    }
+
+
+    for(auto node : visited_nodes){
+        cout << node.index << "("<<node.capacity <<","<<node.source << ")"<< endl;
+    }
+
+    return path;
+
+
+}
+
+
+
+
+void firstScenario::compute_1_2() {
+    vector<vector<Route>> nodes = safe_nodes;
+    cout << "All paths from Source (0) to Destination(" << finalNode <<"):"<< endl;
+    for(auto & pat : allPaths(nodes)){
+
+        printPath(pat);
+    }
+}
+
+/* Aux functions */
+
+int firstScenario::checkNode(vector<Route> &node) {
+    for(auto & route : node){
+        if(!route.visited){
+            route.visited = true;
+            return route.destination;
+        }
+    }
+    return FAILED_FLAG;
 }
 
 bool firstScenario::run(int state) {
@@ -50,17 +139,43 @@ bool firstScenario::run(int state) {
     }
 }
 
-void firstScenario::compute_1_1() {
-    // Node List
-    vector<vector<Route>> nodes = safe_nodes;
-    // Stack to store all solutions
-    vector<vector<int>> paths = allPaths(nodes);
-
-
-    for(auto & path : paths){
-        printPath(path);
-    }
+void firstScenario::printOptions(){
+    cout << "-*-------------  Scenario 1  --------------------------*-" << endl;
+    cout << " |--> Computing" << endl;
+    cout << " |        1 - Compute Scenario 1.1 " << endl;
+    cout << " |        2 - Compute Scenario 1.2"  << endl;
+    cout << " |--> Exit " << endl;
+    cout << " |        0 - Exit Scenario "<< endl;
+    cout << "-*----------------------------------------------------*-" << endl;
 }
+
+void firstScenario::printSolution(vector<int> path,int maxCapacity){
+    cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
+    cout << " |-->Max path capacity: " << maxCapacity << endl;
+    printPath(path);
+    cout << "-*----------------------------------------------------*-" << endl;
+}
+
+void firstScenario::printPath(vector<int> path){
+    cout << "(";
+    for(int i = 0; i < path.size(); i++){
+        cout << path.at(i);
+        if(i < path.size()-1) cout << "->";
+    }
+    cout << ")" << endl;
+}
+
+vector<int> firstScenario::stackIntoVector(stack<int> stack) {
+    vector<int> vector;
+    while(!stack.empty()) {
+        vector.push_back(stack.top());
+        stack.pop();
+    }
+    reverse(vector.begin(), vector.end());
+    return vector;
+}
+
+/* Most likely trash */
 
 vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
     // Vector to store paths that lead to destination
@@ -79,12 +194,12 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
         node_index = path.top();
         //Check if the current node corresponds to the destination
         if(node_index != finalNode){
-            route_index = checkNode( nodes.at(node_index));
+            route_index = checkNode(nodes.at(node_index));
             if(route_index != FAILED_FLAG){
                 path.push(route_index);
             }
             else{
-                //if the path
+                //if the path leads to a dead end pop it
                 path.pop();
             }
         }
@@ -96,40 +211,31 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
     return correctPaths;
 }
 
-vector<int> firstScenario::stackIntoVector(stack<int> stack) {
-    vector<int> vector;
-    while(!stack.empty()) {
-        vector.push_back(stack.top());
-        stack.pop();
-    }
-    reverse(vector.begin(), vector.end());
-    return vector;
-}
+void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+    //Max capacity of the path
+    //Min capacity of the nodes of the path
+    int maxCapacity = -1,minCapacity;
 
-int firstScenario::checkNode(vector<Route> &node) {
-    for(auto & route : node){
-        if(!route.visited){
-            route.visited = true;
-            return route.destination;
+    // The best path, the one with the max capacity
+    vector<int> theChosenOne;
+    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
+    for (int i = 0; i < paths.size(); i++) {
+        minCapacity = INT64_MAX;
+        auto currentPath = paths[i];
+        //Only iterating from 0 to size-1 since destination does not have capacity
+        for (int j = 0; j < currentPath.size()-1; j++) {
+            auto currentNode = currentPath[j];
+            if(nodes.at(currentNode).capacity() < minCapacity){
+                minCapacity = nodes.at(currentNode).capacity();
+                //Computing all nodes from each path and then get the smallest capacity of the path
+            }
+        }
+        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
+        if(minCapacity>maxCapacity) {
+            maxCapacity = minCapacity;
+            theChosenOne = paths[i];
         }
     }
-    return FAILED_FLAG;
+
+    printSolution(theChosenOne,maxCapacity);
 }
-
-void firstScenario::printPath(vector<int> path){
-    cout << "(";
-    for(int i = 0; i < path.size(); i++){
-        cout << path.at(i);
-        if(i < path.size()-1) cout << "->";
-    }
-    cout << ")" << endl;
-}
-
-
-
-void firstScenario::compute_1_2() {
-
-}
-
-
-
