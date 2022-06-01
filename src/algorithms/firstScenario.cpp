@@ -33,9 +33,6 @@ void firstScenario::compute() {
 void firstScenario::compute_1_1() {
     // Node List, a copy of the data input
     vector<vector<Route>> nodes = safe_nodes;
-    for(auto & pat : allPaths(nodes)){
-        printPath(pat);
-    }
     getBestPath(allPaths(nodes),nodes);
 }
 
@@ -116,7 +113,10 @@ int firstScenario::checkNode(vector<Route> &node) {
 }
 
 void firstScenario::compute_1_2() {
-
+    vector<vector<Route>> nodes = safe_nodes;
+    for(auto & pat : allPaths(nodes)){
+        printPath(pat);
+    }
 }
 
 /* Aux functions */
