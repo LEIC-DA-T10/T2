@@ -102,7 +102,9 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
 
 void firstScenario::compute_1_2() {
     vector<vector<Route>> nodes = safe_nodes;
+    cout << "All paths from Source (0) to Destination(" << finalNode <<"):"<< endl;
     for(auto & pat : allPaths(nodes)){
+
         printPath(pat);
     }
 }
