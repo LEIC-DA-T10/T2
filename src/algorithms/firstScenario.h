@@ -26,11 +26,12 @@ public:
 
     vector<vector<int>> allPaths(vector<vector<struct Route>> Graph);
 
-
-    int isVisited(int vertexToCheck, vector<int> &currentPath);
-
     int checkNode(vector<Route> &node);
 
     vector<int> stackIntoVector(stack<int> stack);
+
+    void getBestPath(vector<vector<int>> paths, vector<vector<struct Route>> nodes);
+
+    void printSolution(vector<int> path, int maxCapacity);
 };
 #endif //DA_T1_FIRSTSCENARIO_H

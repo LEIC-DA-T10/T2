@@ -27,40 +27,47 @@ void firstScenario::compute() {
     }
 }
 
-void firstScenario::printOptions(){
-    cout << "-*-------------  Scenario 1  --------------------------*-" << endl;
-    cout << " |--> Computing" << endl;
-    cout << " |        1 - Compute Scenario 1.1 " << endl;
-    cout << " |        2 - Compute Scenario 1.2"  << endl;
-    cout << " |--> Exit " << endl;
-    cout << " |        0 - Exit Scenario "<< endl;
-    cout << "-*----------------------------------------------------*-" << endl;
-}
 
-bool firstScenario::run(int state) {
-    switch (state) {
-        case 1:
-            compute_1_1();
-            return true;
-        case 2:
-            compute_1_2();
-            return true;
-        default:
-            return false;
-    }
-}
+
 
 void firstScenario::compute_1_1() {
-    // Node List
+    // Node List, a copy of the data input
     vector<vector<Route>> nodes = safe_nodes;
-    // Stack to store all solutions
-    vector<vector<int>> paths = allPaths(nodes);
-
-
-    for(auto & path : paths){
-        printPath(path);
+    for(auto & pat : allPaths(nodes)){
+        printPath(pat);
     }
+    getBestPath(allPaths(nodes),nodes);
 }
+
+void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+    //Max capacity of the path
+    //Min capacity of the nodes of the path
+    int maxCapacity = -1,minCapacity;
+
+    // The best path, the one with the max capacity
+    vector<int> theChosenOne;
+    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
+    for (int i = 0; i < paths.size(); i++) {
+        minCapacity = INT64_MAX;
+        auto currentPath = paths[i];
+        //Only iterating from 0 to size-1 since destination does not have capacity
+        for (int j = 0; j < currentPath.size()-1; j++) {
+            auto currentNode = currentPath[j];
+            if(nodes.at(currentNode).capacity() < minCapacity){
+                minCapacity = nodes.at(currentNode).capacity();
+                //Computing all nodes from each path and then get the smallest capacity of the path
+            }
+        }
+        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
+        if(minCapacity>maxCapacity) {
+            maxCapacity = minCapacity;
+            theChosenOne = paths[i];
+        }
+    }
+
+    printSolution(theChosenOne,maxCapacity);
+}
+
 
 vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
     // Vector to store paths that lead to destination
@@ -79,12 +86,12 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
         node_index = path.top();
         //Check if the current node corresponds to the destination
         if(node_index != finalNode){
-            route_index = checkNode( nodes.at(node_index));
+            route_index = checkNode(nodes.at(node_index));
             if(route_index != FAILED_FLAG){
                 path.push(route_index);
             }
             else{
-                //if the path
+                //if the path leads to a dead end pop it
                 path.pop();
             }
         }
@@ -96,15 +103,7 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
     return correctPaths;
 }
 
-vector<int> firstScenario::stackIntoVector(stack<int> stack) {
-    vector<int> vector;
-    while(!stack.empty()) {
-        vector.push_back(stack.top());
-        stack.pop();
-    }
-    reverse(vector.begin(), vector.end());
-    return vector;
-}
+
 
 int firstScenario::checkNode(vector<Route> &node) {
     for(auto & route : node){
@@ -116,6 +115,42 @@ int firstScenario::checkNode(vector<Route> &node) {
     return FAILED_FLAG;
 }
 
+void firstScenario::compute_1_2() {
+
+}
+
+/* Aux functions */
+
+bool firstScenario::run(int state) {
+    switch (state) {
+        case 1:
+            compute_1_1();
+            return true;
+        case 2:
+            compute_1_2();
+            return true;
+        default:
+            return false;
+    }
+}
+
+void firstScenario::printOptions(){
+    cout << "-*-------------  Scenario 1  --------------------------*-" << endl;
+    cout << " |--> Computing" << endl;
+    cout << " |        1 - Compute Scenario 1.1 " << endl;
+    cout << " |        2 - Compute Scenario 1.2"  << endl;
+    cout << " |--> Exit " << endl;
+    cout << " |        0 - Exit Scenario "<< endl;
+    cout << "-*----------------------------------------------------*-" << endl;
+}
+
+void firstScenario::printSolution(vector<int> path,int maxCapacity){
+    cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
+    cout << " |-->Max path capacity: " << maxCapacity << endl;
+    printPath(path);
+    cout << "-*----------------------------------------------------*-" << endl;
+}
+
 void firstScenario::printPath(vector<int> path){
     cout << "(";
     for(int i = 0; i < path.size(); i++){
@@ -125,11 +160,13 @@ void firstScenario::printPath(vector<int> path){
     cout << ")" << endl;
 }
 
-
-
-void firstScenario::compute_1_2() {
-
+vector<int> firstScenario::stackIntoVector(stack<int> stack) {
+    vector<int> vector;
+    while(!stack.empty()) {
+        vector.push_back(stack.top());
+        stack.pop();
+    }
+    reverse(vector.begin(), vector.end());
+    return vector;
 }
-
-
 
