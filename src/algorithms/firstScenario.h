@@ -28,5 +28,9 @@ public:
 
 
     int isVisited(int vertexToCheck, vector<int> &currentPath);
+
+    int checkNode(vector<Route> &node);
+
+    vector<int> stackIntoVector(stack<int> stack);
 };
 #endif //DA_T1_FIRSTSCENARIO_H
