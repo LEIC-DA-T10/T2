@@ -30,75 +30,80 @@ void firstScenario::compute() {
 
 
 
+
 void firstScenario::compute_1_1() {
     // Node List, a copy of the data input
     vector<vector<Route>> nodes = safe_nodes;
-    getBestPath(allPaths(nodes),nodes);
+  //  getBestPath(allPaths(nodes),nodes);
+    printPath(elephant_algorithm(nodes));
 }
 
-void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
-    //Max capacity of the path
-    //Min capacity of the nodes of the path
-    int maxCapacity = -1,minCapacity;
+vector<int> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
+    vector<int> path;
+    vector<Vertex> visited_nodes;
+    vector<Route> queueBuffer;
+    Vertex current_vertex;
 
-    // The best path, the one with the max capacity
-    vector<int> theChosenOne;
-    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
-    for (int i = 0; i < paths.size(); i++) {
-        minCapacity = INT64_MAX;
-        auto currentPath = paths[i];
-        //Only iterating from 0 to size-1 since destination does not have capacity
-        for (int j = 0; j < currentPath.size()-1; j++) {
-            auto currentNode = currentPath[j];
-            if(nodes.at(currentNode).capacity() < minCapacity){
-                minCapacity = nodes.at(currentNode).capacity();
-                //Computing all nodes from each path and then get the smallest capacity of the path
-            }
-        }
-        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
-        if(minCapacity>maxCapacity) {
-            maxCapacity = minCapacity;
-            theChosenOne = paths[i];
-        }
+    //Compare Function used for the priority queue, sorts elements by capacity
+    auto compare = [](Route &route1, Route &route2) {
+        return route1.capacity < route2.capacity;
+    };
+
+    priority_queue<Route,vector<Route>, decltype(compare)> priorityQueue(compare);
+
+    //Add first node routes to priority queue
+    current_vertex.index = 0;
+    for(auto route : nodes.at(0)){
+        priorityQueue.push(route);
     }
 
-    printSolution(theChosenOne,maxCapacity);
-}
+    while (!priorityQueue.empty()){
 
+        current_vertex.source = priorityQueue.top().source;
+        current_vertex.index = priorityQueue.top().destination;
+        current_vertex.capacity = priorityQueue.top().capacity;
+        priorityQueue.pop();
 
-vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
-    // Vector to store paths that lead to destination
-    vector<vector<int>> correctPaths;
-    //Stack to hold the current path
-    stack<int> path;
+        if(current_vertex.index != finalNode){
+            for(auto & route : nodes.at(current_vertex.index)){
+                if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
+                    route.source = current_vertex.index;
 
-    int node_index = 0;
-    int route_index;
+                    queueBuffer.clear();
+                    //Inserting priorityQueue elements into vector Buffer
+                    while(!priorityQueue.empty()){
+                        Route routeBuffer = priorityQueue.top();
+                        priorityQueue.pop();
+                        queueBuffer.push_back(routeBuffer);
+                    }
 
-    //insert first node into stack
-    path.push(node_index);
-    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
-    while(!path.empty()){
-        // look for the first node of the path
-        node_index = path.top();
-        //Check if the current node corresponds to the destination
-        if(node_index != finalNode){
-            route_index = checkNode(nodes.at(node_index));
-            if(route_index != FAILED_FLAG){
-                path.push(route_index);
-            }
-            else{
-                //if the path leads to a dead end pop it
-                path.pop();
+                    //Check if route destination is already in queue, if it is , overwrite if capacity is larger
+                    if(overwriteIfExists(queueBuffer,route) == FAILED_FLAG){
+                        queueBuffer.push_back(route);
+                    }
+
+                    //Re-insert elements into prio queue
+                    for(auto elem : queueBuffer){
+                        priorityQueue.push(elem);
+                    }
+                }
             }
         }
-        else{
-            correctPaths.push_back(stackIntoVector(path));
-            path.pop();
-        }
+        visited_nodes.push_back(current_vertex);
     }
-    return correctPaths;
+
+
+    for(auto node : visited_nodes){
+        cout << node.index << "("<<node.capacity <<","<<node.source << ")"<< endl;
+    }
+
+    return path;
+
+
 }
+
+
+
 
 void firstScenario::compute_1_2() {
     vector<vector<Route>> nodes = safe_nodes;
@@ -170,3 +175,67 @@ vector<int> firstScenario::stackIntoVector(stack<int> stack) {
     return vector;
 }
 
+/* Most likely trash */
+
+vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
+    // Vector to store paths that lead to destination
+    vector<vector<int>> correctPaths;
+    //Stack to hold the current path
+    stack<int> path;
+
+    int node_index = 0;
+    int route_index;
+
+    //insert first node into stack
+    path.push(node_index);
+    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
+    while(!path.empty()){
+        // look for the first node of the path
+        node_index = path.top();
+        //Check if the current node corresponds to the destination
+        if(node_index != finalNode){
+            route_index = checkNode(nodes.at(node_index));
+            if(route_index != FAILED_FLAG){
+                path.push(route_index);
+            }
+            else{
+                //if the path leads to a dead end pop it
+                path.pop();
+            }
+        }
+        else{
+            correctPaths.push_back(stackIntoVector(path));
+            path.pop();
+        }
+    }
+    return correctPaths;
+}
+
+void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+    //Max capacity of the path
+    //Min capacity of the nodes of the path
+    int maxCapacity = -1,minCapacity;
+
+    // The best path, the one with the max capacity
+    vector<int> theChosenOne;
+    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
+    for (int i = 0; i < paths.size(); i++) {
+        minCapacity = INT64_MAX;
+        auto currentPath = paths[i];
+        //Only iterating from 0 to size-1 since destination does not have capacity
+        for (int j = 0; j < currentPath.size()-1; j++) {
+            auto currentNode = currentPath[j];
+            if(nodes.at(currentNode).capacity() < minCapacity){
+                minCapacity = nodes.at(currentNode).capacity();
+                //Computing all nodes from each path and then get the smallest capacity of the path
+            }
+        }
+        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
+        if(minCapacity>maxCapacity) {
+            maxCapacity = minCapacity;
+            theChosenOne = paths[i];
+        }
+    }
+
+    printSolution(theChosenOne,maxCapacity);
+}
