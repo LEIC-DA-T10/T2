@@ -105,9 +105,12 @@ void secondScenario::compute_2_2() {
 
 void secondScenario::compute_2_3() {
     vector<vector<Route>> nodes = safe_nodes;
-    vector<int> path;
+    pair<int,vector<int>> output;
 
-    path = computeEdmondsKarp(nodes);
+    output = computeElephant(nodes);
+
+    cout << "Found Maximum Group Size [" << output.first << "] with the following path: " << endl;
+    printPath(output.second);
 }
 
 void secondScenario::compute_2_4() {
@@ -278,7 +281,9 @@ void secondScenario::changeFlow(vector<vector<Route>> &nodes, const vector<int> 
     }
 }
 
-vector<int> secondScenario::computeEdmondsKarp(vector<vector<Route>> &nodes) {
+pair<int, vector<int>> secondScenario::computeElephant(vector<vector<Route>> &nodes) {
+    int next,max;
+    pair<int,vector<int>> output;
     vector<int> path;
     vector<Vertex> visited_nodes;
     vector<Route> queueBuffer;
@@ -303,6 +308,9 @@ vector<int> secondScenario::computeEdmondsKarp(vector<vector<Route>> &nodes) {
             for(auto & route : nodes.at(current_vertex.index)){
                 if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
                     route.source = current_vertex.index;
+
+                    route.capacity = getMin(current_vertex.capacity,route.capacity);
+
                     queueBuffer.clear();
                     //Inserting priorityQueue elements into vector Buffer
                     while(!priorityQueue.empty()){
@@ -323,15 +331,34 @@ vector<int> secondScenario::computeEdmondsKarp(vector<vector<Route>> &nodes) {
                 }
             }
         }
+        else{
+            visited_nodes.push_back(current_vertex);
+            break;
+        }
         visited_nodes.push_back(current_vertex);
     }
 
+    
+    path.push_back(visited_nodes.back().index);
+    next = visited_nodes.back().source;
+    max = visited_nodes.back().capacity;
 
-    for(auto node : visited_nodes){
-        cout << node.index << "("<<node.capacity <<","<<node.source << ")"<< endl;
+    //Insert Path into output vector
+    for(int i = visited_nodes.size() - 1; i >= 0; i--){
+        Vertex node = visited_nodes.at(i);
+        if(node.index == next){
+            path.push_back(node.index);
+            next = node.source;
+        }
     }
 
-    return path;
+    //Add First Node;
+    path.push_back(0);
+    reverse(path.begin(), path.end());
+
+    output.first = max;
+    output.second = path;
+    return output;
 }
 
 int secondScenario::checkIfContains(const vector<Vertex> &vector, int value) {
