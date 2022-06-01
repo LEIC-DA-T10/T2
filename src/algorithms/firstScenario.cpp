@@ -27,10 +27,6 @@ void firstScenario::compute() {
     }
 }
 
-
-
-
-
 void firstScenario::compute_1_1() {
     vector<vector<Route>> nodes = safe_nodes;
     pair<int,vector<int>> output;
@@ -121,20 +117,100 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
     return output;
 }
 
-
-
-
 void firstScenario::compute_1_2() {
+    int buffer = 1;
     vector<vector<Route>> nodes = safe_nodes;
-    cout << "All paths from Source (0) to Destination(" << finalNode <<"):"<< endl;
-    for(auto & pat : allPaths(nodes)){
+    vector<vector<int>> paths;
+    vector<int> buffers;
 
-        printPath(pat);
+    int end = 0;
+    int pathsFound = 0;
+
+    while(end == 0){
+        stack<int> path = findPathLazy(buffer, nodes);
+        if(!path.empty()){
+            vector<int> vectorPath = stackIntoVector(path);
+            paths.push_back(vectorPath);
+            blockPath(nodes, vectorPath, buffer);
+            pathsFound ++;
+        }
+        else{
+           if (pathsFound == 0){
+               end = 1;
+           }else{
+               pathsFound = 0;
+               buffer++;
+           }
+        }
+    }
+
+    for(auto path : paths){
+        printPath(path);
+        cout << "-*-----*-" << endl;
     }
 }
 
-/* Aux functions */
+stack<int> firstScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
+    stack<int> path;
+    int node_index = 0;
+    int route_index;
 
+    //insert first node into stack
+    path.push(node_index);
+    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
+    while(!path.empty()){
+        node_index = path.top();
+        if(node_index != finalNode){
+            route_index = checkNode(groupSize, nodes.at(node_index));
+            if(route_index != FAILED_FLAG){
+                path.push(route_index);
+            }
+            else{
+                path.pop();
+            }
+        }
+        else{
+            //Found final node
+            break;
+        }
+    }
+
+    return path;
+}
+
+void firstScenario::blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize) {
+    int source,destination = 0,index;
+    for(int i = 0; destination != finalNode; i++){
+        source = path.at(i);
+        destination = path.at(i+1);
+        index = checkIfDestination(nodes.at(source),destination);
+        if(index != FAILED_FLAG){
+            nodes.at(source).at(index).capacity -= groupSize;
+        }
+    }
+}
+
+int firstScenario::checkIfDestination(const vector<Route>& node, int destination){
+    for(int i = 0; i < node.size(); i++){
+        if(destination == node.at(i).destination){
+            return i;
+        }
+    }
+    return FAILED_FLAG;
+}
+
+
+
+/* Aux functions */
+int firstScenario::checkNode(int groupSize, vector<Route> &node) {
+    for(auto & route : node){
+        if(groupSize <= route.capacity && !route.visited){
+            route.visited = true;
+            return route.destination;
+        }
+    }
+    return FAILED_FLAG;
+}
 int firstScenario::checkNode(vector<Route> &node) {
     for(auto & route : node){
         if(!route.visited){

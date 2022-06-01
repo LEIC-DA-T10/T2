@@ -43,5 +43,10 @@ public:
     static int overwriteIfExists(vector<Route> & routes, Route newRoute);
     static int getMin(int value1, int value2);
 
+    void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
+
+    int checkIfDestination(const vector<Route> &node, int destination);
+
+    int checkNode(int groupSize, vector<Route> &node);
 };
 #endif //DA_T1_FIRSTSCENARIO_H
