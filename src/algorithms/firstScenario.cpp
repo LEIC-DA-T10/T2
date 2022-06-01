@@ -100,7 +100,14 @@ vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
     return correctPaths;
 }
 
+void firstScenario::compute_1_2() {
+    vector<vector<Route>> nodes = safe_nodes;
+    for(auto & pat : allPaths(nodes)){
+        printPath(pat);
+    }
+}
 
+/* Aux functions */
 
 int firstScenario::checkNode(vector<Route> &node) {
     for(auto & route : node){
@@ -111,15 +118,6 @@ int firstScenario::checkNode(vector<Route> &node) {
     }
     return FAILED_FLAG;
 }
-
-void firstScenario::compute_1_2() {
-    vector<vector<Route>> nodes = safe_nodes;
-    for(auto & pat : allPaths(nodes)){
-        printPath(pat);
-    }
-}
-
-/* Aux functions */
 
 bool firstScenario::run(int state) {
     switch (state) {
