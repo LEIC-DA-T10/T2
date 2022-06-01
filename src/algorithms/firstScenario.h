@@ -24,10 +24,9 @@ public:
 
     void printPath(vector<int> path);
 
-    void longestPath(int s);
+    vector<vector<int>> allPaths(vector<vector<struct Route>> Graph);
 
-    void allPaths(int s);
 
-    void printAllPathsUtil(int u, int d, bool *visited, int *path, int &path_index);
+    int isVisited(int vertexToCheck, vector<int> &currentPath);
 };
 #endif //DA_T1_FIRSTSCENARIO_H

@@ -37,7 +37,6 @@ void firstScenario::printOptions(){
     cout << "-*----------------------------------------------------*-" << endl;
 }
 
-
 bool firstScenario::run(int state) {
     switch (state) {
         case 1:
@@ -52,29 +51,58 @@ bool firstScenario::run(int state) {
 }
 
 void firstScenario::compute_1_1() {
-    int Source,Destination;
-    stack<int> path;
+    // Node List
     vector<vector<Route>> nodes = safe_nodes;
+    // Stack to store all solutions
+    vector<vector<int>> paths = allPaths(nodes);
 
-
+    for(auto & path : paths){
+        printPath(path);
+    }
 }
 
-void firstScenario::allPaths(int s)
-{
-    stack<int> Stack;
-    int numberNodes = finalNode++;
+vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
+    // Source and Destination nodes explicitly;
+    int Source = 0;
+    int Destination = finalNode;
 
+    // Queue to store all paths
+    queue<vector<int>> paths;
+    
+    // Vector to store paths that lead to destination
+    vector<vector<int>> correctPaths;
+    //Current path
+    vector<int> path;
+    //Adding the source to the initial path
+    path.push_back(Source);
+    //Pushing the path to the path vector
+    paths.push(path);
+    
+    int currentVertex;
+    
+    //Stop only when there's no more paths to compute
+    while(!paths.empty()){
+        path = paths.front();
+        paths.pop();
+        
+        currentVertex = path[path.size()-1];
+        
+        if(currentVertex == Destination){
+            cout << "Encontrado Caminho" << endl;
+            correctPaths.push_back(path);
+        }
 
-    bool* visited = new bool[numberNodes];
-    // Initialize all vertices as not visited
-    for (int i = 0; i < numberNodes; i++)
-        visited[i] = false;
+        for (int i = 0; i < nodes[currentVertex].size(); i++){
+            if (!nodes[currentVertex][i].visited){
+                nodes[currentVertex][i].visited = true;
+                vector<int> newpath(path);
+                newpath.push_back(nodes[currentVertex][i].destination);
+                paths.push(newpath);
+            }
+        }
+    }
 
-
-}
-//https://www.geeksforgeeks.org/find-paths-given-source-destination/
-void firstScenario::printAllPathsUtil(int u, int d, bool visited[],int path[], int& path_index){
-
+    return correctPaths;
 }
 
 void firstScenario::printPath(vector<int> path){
@@ -89,4 +117,6 @@ void firstScenario::printPath(vector<int> path){
 void firstScenario::compute_1_2() {
 
 }
+
+
 
