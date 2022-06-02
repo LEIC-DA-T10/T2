@@ -105,12 +105,27 @@ void secondScenario::compute_2_2() {
 
 void secondScenario::compute_2_3() {
     vector<vector<Route>> nodes = safe_nodes;
+    int source = 0;
+    int sink = finalNode;
     vector<Vertex> vertices;
-    vertices = dijkstra(nodes, finalNode);
+    vector<Vertex> shortest_path;
+    Vertex current_vertex;
 
-    for(const auto& vertex : vertices){
-        cout << "Node ["<< vertex.index << "] distance : " << vertex.distance << endl;
+    //get shortest path from source to sink for all nodes
+    vertices = dijkstra(nodes, sink, source);
+
+    //insert shortest path from source to sink into a vector
+    current_vertex = vertices.at(sink);
+    while(true){
+        shortest_path.push_back(current_vertex);
+        if(current_vertex.index == source) break;
+        current_vertex = vertices.at(current_vertex.source);
     }
+
+    for(auto elem : shortest_path){
+        cout << elem.index << endl;
+    }
+
 }
 
 void secondScenario::compute_2_4() {
@@ -199,7 +214,7 @@ int secondScenario::checkIfDestination(const vector<Route>& node, int destinatio
     return FAILED_FLAG;
 }
 
-vector<Vertex> secondScenario::dijkstra(vector<vector<Route>> &nodes, int final) {
+vector<Vertex> secondScenario::dijkstra(vector<vector<Route>> &nodes, int final, int source) {
     vector<Vertex> vertices;
     vector<int> visited;
     Vertex current_vertex;
@@ -214,7 +229,7 @@ vector<Vertex> secondScenario::dijkstra(vector<vector<Route>> &nodes, int final)
     for(const auto& node : nodes){
         Vertex vertex;
         vertex.index = counter;
-        if(counter == 0)
+        if(counter == source)
             vertex.distance = 0;
         vertex.linked_vertex = node;
         vertices.push_back(vertex);
@@ -224,8 +239,8 @@ vector<Vertex> secondScenario::dijkstra(vector<vector<Route>> &nodes, int final)
     current_vertex.index = counter;
     vertices.push_back(current_vertex);
 
-    priorityQueue.push(vertices.at(0));
-    visited.push_back(0);
+    priorityQueue.push(vertices.at(source));
+    visited.push_back(source);
 
     while (!priorityQueue.empty()){
         current_vertex = priorityQueue.top();

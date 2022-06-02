@@ -17,7 +17,7 @@ struct Route{
 struct Vertex{
     int index{};
     int capacity{};
-    int source{};
+    int source = -1;
     int distance = std::numeric_limits<int>::max();
     std::vector<Route> linked_vertex{};
 };
