@@ -20,11 +20,11 @@ public:
 
     bool run(int state);
 
-    void printOptions();
+    static void printOptions();
 
-    void printPath(vector<int> path);
+    static void printPath(vector<int> path);
 
-    vector<int> stackIntoVector(stack<int> stack);
+    static vector<int> stackIntoVector(stack<int> stack);
 
     stack<int> findPathLazy(int groupSize, vector<vector<Route>> nodes);
 
@@ -38,20 +38,23 @@ public:
 
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
 
-    int checkIfDestination(const vector<Route> &node, int destination);
+    static int checkIfDestination(const vector<Route> &node, int destination);
 
-    int checkNode(int groupSize, vector<Route> &node);
+    static int checkNode(int groupSize, vector<Route> &node);
 
-    pair<int, vector<int>> getBiggestGroupSize(vector<vector<int>> paths, vector<vector<struct Route>> nodes);
+    static pair<int, vector<int>> getBiggestGroupSize(const vector<vector<int>>& paths, vector<vector<struct Route>> nodes);
 
-    pair<int, vector<int>> getMinTransfers(vector<vector<int>> paths);
+    static pair<double, vector<int>> getRatio(vector<vector<int>> paths, const vector<vector<struct Route>>& nodes);
 
-    pair<double, vector<int>> getRatio(vector<vector<int>> paths, vector<vector<struct Route>> nodes);
+    static void printSolution(vector<int> path, int maxCapacity);
 
-    void printSolution(vector<int> path, int maxCapacity);
+    static void printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes);
 
-    void printSolution(vector<vector<int>> paths, vector<vector<Route>> nodes);
+    static int getGroupSize(vector<int> &path, vector<vector<struct Route>> nodes);
 
-    int getGroupSize(vector<int> &path, vector<vector<struct Route>> nodes);
+    static pair<int, vector<int>> getMinTransfers(vector<vector<int>> paths, const vector<vector<struct Route>>& nodes);
+
+    static vector<vector<int>>
+    getSimilarPaths(vector<vector<int>> paths, const vector<vector<struct Route>>& nodes, vector<int> pathToCompare);
 };
 #endif //DA_T1_FIRSTSCENARIO_H

@@ -1,16 +1,14 @@
 //
 // Created by Eduardo Correia on 09/04/2022.
+// Developed by Jose Carvalho
 //
 
-
 #include "firstScenario.h"
-
-#include <climits>
 #include <iostream>
 #include <algorithm>
 #include <bits/stdc++.h>
 #include <stack>
-
+#include <utility>
 
 firstScenario::firstScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes){}
 
@@ -22,10 +20,9 @@ void firstScenario::compute() {
     if(run(state)){
         cout << "Finished Computing Scenario 1_" << state << "." << endl;
     }
-    else{
-        cout << "-*----------------------------------------------------*-" << endl;
-        cout << "               Exiting to main menu." << endl;
-    }
+    cout << "-*----------------------------------------------------*-" << endl;
+    cout << "               Exiting to main menu..." << endl;
+
 }
 
 void firstScenario::compute_1_1() {
@@ -35,7 +32,7 @@ void firstScenario::compute_1_1() {
     output = elephant_algorithm(nodes);
 
     cout << "Found Maximum Group Size [" << output.first << "] with the following path: " << endl;
-    printPath(output.second);
+    printSolution(output.second,output.first);
 }
 
 pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
@@ -46,11 +43,11 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
     vector<Route> queueBuffer;
     Vertex current_vertex;
 
-    //Compare Function used for the prio queue, sorts elements by capacity
+    //Compare Function used for the priority queue, sorts elements by capacity
     auto compare = [](Route &route1, Route &route2) { return route1.capacity < route2.capacity;};
     priority_queue<Route,vector<Route>, decltype(compare)> priorityQueue(compare);
 
-    //Add first node routes to prio queue
+    //Add first node routes to priority queue
     current_vertex.index = 0;
     for(auto route : nodes.at(0)){
         priorityQueue.push(route);
@@ -81,7 +78,7 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
                         queueBuffer.push_back(route);
                     }
 
-                    //Re-insert elements into prio queue
+                    //Re-insert elements into priority queue
                     for(auto elem : queueBuffer){
                         priorityQueue.push(elem);
                     }
@@ -162,7 +159,19 @@ void firstScenario::compute_1_2() {
 
 /* Aux functions */
 
-pair<double,vector<int>> firstScenario::getRatio(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+vector<vector<int>> firstScenario::getSimilarPaths(vector<vector<int>> paths, const vector<vector<struct Route>>& nodes,vector<int> pathToCompare){
+
+    vector<vector<int>> similarPaths;
+
+    for(auto & path : paths){
+        if (path.size() == pathToCompare.size() && (getGroupSize(path,nodes) == getGroupSize(pathToCompare,nodes) && path != pathToCompare))
+            similarPaths.push_back(path);
+    }
+
+    return similarPaths;
+}
+
+pair<double,vector<int>> firstScenario::getRatio(vector<vector<int>> paths,const vector<vector<struct Route>>& nodes){
 
     //Min transfers
     double bestRatio = INT32_MIN;
@@ -178,12 +187,12 @@ pair<double,vector<int>> firstScenario::getRatio(vector<vector<int>> paths,vecto
             theChosenOne = path;
         }
     }
-    output.first = bestRatio;
+    output.first =  bestRatio;
     output.second = theChosenOne;
     return output;
 }
 
-pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths){
+pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths,const vector<vector<struct Route>>& nodes){
 
     //Min transfers
     int minTransfers = INT32_MAX;
@@ -196,6 +205,8 @@ pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths){
         if (path.size() < minTransfers){
             minTransfers = path.size();
             theChosenOne = path;
+        }else if (path.size() == minTransfers && getGroupSize(theChosenOne,nodes) < getGroupSize(path,nodes)){
+
         }
     }
 
@@ -204,7 +215,7 @@ pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths){
     return output;
 }
 
-pair<int,vector<int>> firstScenario::getBiggestGroupSize(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+pair<int,vector<int>> firstScenario::getBiggestGroupSize(const vector<vector<int>>& paths,vector<vector<struct Route>> nodes){
     //Max capacity of the path
     //Min capacity of the nodes of the path
     int maxCapacity = -1,minCapacity;
@@ -214,9 +225,9 @@ pair<int,vector<int>> firstScenario::getBiggestGroupSize(vector<vector<int>> pat
     // The best path, the one with the max capacity
     vector<int> theChosenOne;
     // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
-    for (int i = 0; i < paths.size(); i++) {
+    for (auto & path : paths) {
         minCapacity = INT32_MAX;
-        auto currentPath = paths[i];
+        auto currentPath = path;
         //Only iterating from 0 to size-1 since destination does not have capacity
         for (int j = 0; j < currentPath.size()-1; j++) {
             auto currentNode = currentPath[j];
@@ -228,7 +239,9 @@ pair<int,vector<int>> firstScenario::getBiggestGroupSize(vector<vector<int>> pat
         //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
         if(minCapacity>maxCapacity) {
             maxCapacity = minCapacity;
-            theChosenOne = paths[i];
+            theChosenOne = path;
+        }else if (minCapacity == maxCapacity && theChosenOne.size() > path.size()){
+            theChosenOne = path;
         }
     }
 
@@ -323,21 +336,30 @@ void firstScenario::printOptions(){
 void firstScenario::printSolution(vector<int> path,int maxCapacity){
     cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
     cout << " |-->Max path capacity: " << maxCapacity << endl;
-    printPath(path);
-    cout << "-*----------------------------------------------------*-" << endl;
+    cout << " | Path: "<< endl;
+    cout << " | ";
+    printPath(std::move(path));
 }
 
-void firstScenario::printSolution(vector<vector<int>> paths, vector<vector<Route>> nodes){
+void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes){
+    char option;
+    sort( paths.begin(), paths.end());
+    paths.erase( unique( paths.begin(), paths.end() ), paths.end() );
 
+    // Get pareto-optimal paths
     pair<int,vector<int>> MaxSize = getBiggestGroupSize(paths,nodes);
-    pair<int,vector<int>> MinTrans = getMinTransfers(paths);
+    pair<int,vector<int>> MinTrans = getMinTransfers(paths,nodes);
     pair<double,vector<int>> BestRatio = getRatio(paths,nodes);
 
-    char option;
+    // Get other "pareto-optimal" paths if exist
+    vector<vector<int>> simSize = getSimilarPaths(paths,nodes,MaxSize.second);
+    vector<vector<int>> simTrans = getSimilarPaths(paths,nodes,MinTrans.second);
+    vector<vector<int>> simRatio = getSimilarPaths(paths,nodes,BestRatio.second);
+
     cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
-    cout << " |-->Found " << paths.size() << " path(s)."<< endl;
+    cout << " | [Found " << paths.size() << " path(s)]"<< endl;
     cout << " |"<< endl;
-    cout << " |-->Printing best options:"<< endl;
+    cout << " |-->Printing best solutions:"<< endl;
 
     cout << " | [Highest Capacity]"<< endl;
     cout << " | Capacity: "<< MaxSize.first<< endl;
@@ -346,12 +368,31 @@ void firstScenario::printSolution(vector<vector<int>> paths, vector<vector<Route
     cout << " | ";
     printPath(MaxSize.second);
 
+    if(!simSize.empty()){
+        cout << " |-->Other Pareto Optimal solutions:"<< endl;
+        for(auto & path: simSize){
+            cout << " | ";
+            cout << " | [Path] "<< endl;
+            printPath(path);
+        }
+    }
+
+
     cout << " | [Less transfers]"<< endl;
     cout << " | Capacity: "<< getGroupSize(MinTrans.second,nodes)<< endl;
     cout << " | Transfers:"<< MinTrans.first<< endl;
     cout << " | Path:"<< endl;
     cout << " | ";
     printPath(MinTrans.second);
+
+    if(!simTrans.empty()){
+        cout << " |-->Other Pareto Optimal solutions:"<< endl;
+        for(auto & path: simTrans){
+            cout << " | [Paths] "<< endl;
+            cout << " | ";
+            printPath(path);
+        }
+    }
 
     cout << " | [Highest group size to transfers ratio]"<< endl;
     cout << " | Ratio: "<< BestRatio.first<<endl;
@@ -360,13 +401,23 @@ void firstScenario::printSolution(vector<vector<int>> paths, vector<vector<Route
     cout << " | Path:"<< endl;
     cout << " | ";
     printPath(BestRatio.second);
-    cout << " |-->Do you wish to see all possible options?: (y/n)"<< endl;
-    cin >> option;
-    if(option == 'y'){
-        for(auto path : paths){
+
+    if(!simRatio.empty()){
+        cout << " |-->Other Pareto Optimal solutions:"<< endl;
+        for(auto & path: simRatio){
+            cout << " | [Paths] "<< endl;
             cout << " | ";
             printPath(path);
-            cout << " |-------" << endl;
+        }
+    }
+    cout << " | "<< endl;
+    cout << " |-->No other Pareto Optimal solutions were found."<< endl;
+    cout << " |-->Do you wish to see all paths?: (y/n)"<< endl;
+    cin >> option;
+    if(option == 'y'){
+        for(const auto& path : paths){
+            cout << " | ";
+            printPath(path);
         }
     }
 }
