@@ -443,7 +443,7 @@ vector<int> firstScenario::stackIntoVector(stack<int> stack) {
 
 int firstScenario::checkIfContains(const vector<Vertex> &vector, int value) {
     int index = 0;
-    for(auto elem : vector){
+    for(const auto& elem : vector){
         if(elem.index == value) return index;
         index++;
     }
