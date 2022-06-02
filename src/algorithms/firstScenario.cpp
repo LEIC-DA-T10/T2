@@ -23,7 +23,8 @@ void firstScenario::compute() {
         cout << "Finished Computing Scenario 1_" << state << "." << endl;
     }
     else{
-        cout << "Exiting to main menu." << endl;
+        cout << "-*----------------------------------------------------*-" << endl;
+        cout << "               Exiting to main menu." << endl;
     }
 }
 
@@ -118,15 +119,24 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
 }
 
 void firstScenario::compute_1_2() {
-
+    // Copy of data input
     vector<vector<Route>> nodes = safe_nodes;
+    // Vector to Store paths
     vector<vector<int>> paths;
 
+    /* Control variables for the while:
+     *  end = 0 The first try to find a path with a new group size was successful
+     *  buffer = Current group size
+     *  pathsFound = Nbr of paths within a group size
+     *  totalPathsFound = Total nbr of paths found from source to destination in this run
+     */
 
     int end = 0;
-    int pathsFound = 0;
     int buffer = 1;
+
+    int pathsFound = 0;
     int totalPathsFound = 0;
+
 
     while(end == 0){
         stack<int> path = findPathLazy(buffer, nodes);
@@ -147,11 +157,85 @@ void firstScenario::compute_1_2() {
         }
     }
 
-    for(auto path : paths){
-        printPath(path);
-        cout << "-*-----*-" << endl;
+    printSolution(paths,nodes);
+}
+
+/* Aux functions */
+
+pair<double,vector<int>> firstScenario::getRatio(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+
+    //Min transfers
+    double bestRatio = INT32_MIN;
+    pair<float,vector<int>> output;
+    double ratio;
+    // The best path, the one with the least transfers
+    vector<int> theChosenOne;
+
+    for(auto & path : paths){
+        ratio = (double) getGroupSize(path,nodes) / (double) path.size();
+        if (ratio > bestRatio){
+            bestRatio = ratio;
+            theChosenOne = path;
+        }
     }
-    cout << "Found: " << totalPathsFound << " paths";
+    output.first = bestRatio;
+    output.second = theChosenOne;
+    return output;
+}
+
+pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths){
+
+    //Min transfers
+    int minTransfers = INT32_MAX;
+    pair<int,vector<int>> output;
+
+    // The best path, the one with the least transfers
+    vector<int> theChosenOne;
+
+    for(auto & path : paths){
+        if (path.size() < minTransfers){
+            minTransfers = path.size();
+            theChosenOne = path;
+        }
+    }
+
+    output.first = minTransfers;
+    output.second = theChosenOne;
+    return output;
+}
+
+pair<int,vector<int>> firstScenario::getBiggestGroupSize(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
+    //Max capacity of the path
+    //Min capacity of the nodes of the path
+    int maxCapacity = -1,minCapacity;
+
+    pair<int,vector<int>> output;
+
+    // The best path, the one with the max capacity
+    vector<int> theChosenOne;
+    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
+    for (int i = 0; i < paths.size(); i++) {
+        minCapacity = INT32_MAX;
+        auto currentPath = paths[i];
+        //Only iterating from 0 to size-1 since destination does not have capacity
+        for (int j = 0; j < currentPath.size()-1; j++) {
+            auto currentNode = currentPath[j];
+            if(nodes.at(currentNode).capacity() < minCapacity){
+                minCapacity = nodes.at(currentNode).capacity();
+                //Computing all nodes from each path and then get the smallest capacity of the path
+            }
+        }
+        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
+        if(minCapacity>maxCapacity) {
+            maxCapacity = minCapacity;
+            theChosenOne = paths[i];
+        }
+    }
+
+    output.first = maxCapacity;
+    output.second = theChosenOne;
+    return output;
+
 }
 
 stack<int> firstScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
@@ -203,21 +287,9 @@ int firstScenario::checkIfDestination(const vector<Route>& node, int destination
     return FAILED_FLAG;
 }
 
-
-
-/* Aux functions */
 int firstScenario::checkNode(int groupSize, vector<Route> &node) {
     for(auto & route : node){
         if(groupSize <= route.capacity && !route.visited){
-            route.visited = true;
-            return route.destination;
-        }
-    }
-    return FAILED_FLAG;
-}
-int firstScenario::checkNode(vector<Route> &node) {
-    for(auto & route : node){
-        if(!route.visited){
             route.visited = true;
             return route.destination;
         }
@@ -255,6 +327,50 @@ void firstScenario::printSolution(vector<int> path,int maxCapacity){
     cout << "-*----------------------------------------------------*-" << endl;
 }
 
+void firstScenario::printSolution(vector<vector<int>> paths, vector<vector<Route>> nodes){
+
+    pair<int,vector<int>> MaxSize = getBiggestGroupSize(paths,nodes);
+    pair<int,vector<int>> MinTrans = getMinTransfers(paths);
+    pair<double,vector<int>> BestRatio = getRatio(paths,nodes);
+
+    char option;
+    cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
+    cout << " |-->Found " << paths.size() << " path(s)."<< endl;
+    cout << " |"<< endl;
+    cout << " |-->Printing best options:"<< endl;
+
+    cout << " | [Highest Capacity]"<< endl;
+    cout << " | Capacity: "<< MaxSize.first<< endl;
+    cout << " | Transfers: "<< MaxSize.second.size()<< endl;
+    cout << " | Path: "<< endl;
+    cout << " | ";
+    printPath(MaxSize.second);
+
+    cout << " | [Less transfers]"<< endl;
+    cout << " | Capacity: "<< getGroupSize(MinTrans.second,nodes)<< endl;
+    cout << " | Transfers:"<< MinTrans.first<< endl;
+    cout << " | Path:"<< endl;
+    cout << " | ";
+    printPath(MinTrans.second);
+
+    cout << " | [Highest group size to transfers ratio]"<< endl;
+    cout << " | Ratio: "<< BestRatio.first<<endl;
+    cout << " | Capacity: "<< getGroupSize(BestRatio.second,nodes)<< endl;
+    cout << " | Transfers:"<< BestRatio.second.size()<< endl;
+    cout << " | Path:"<< endl;
+    cout << " | ";
+    printPath(BestRatio.second);
+    cout << " |-->Do you wish to see all possible options?: (y/n)"<< endl;
+    cin >> option;
+    if(option == 'y'){
+        for(auto path : paths){
+            cout << " | ";
+            printPath(path);
+            cout << " |-------" << endl;
+        }
+    }
+}
+
 void firstScenario::printPath(vector<int> path){
     cout << "(";
     for(int i = 0; i < path.size(); i++){
@@ -272,71 +388,6 @@ vector<int> firstScenario::stackIntoVector(stack<int> stack) {
     }
     reverse(vector.begin(), vector.end());
     return vector;
-}
-
-/* Most likely trash */
-
-vector<vector<int>> firstScenario::allPaths(vector<vector<struct Route>> nodes){
-    // Vector to store paths that lead to destination
-    vector<vector<int>> correctPaths;
-    //Stack to hold the current path
-    stack<int> path;
-
-    int node_index = 0;
-    int route_index;
-
-    //insert first node into stack
-    path.push(node_index);
-    //if stack is empty, there is no solution, loops breaks when exit node enters stack.
-    while(!path.empty()){
-        // look for the first node of the path
-        node_index = path.top();
-        //Check if the current node corresponds to the destination
-        if(node_index != finalNode){
-            route_index = checkNode(nodes.at(node_index));
-            if(route_index != FAILED_FLAG){
-                path.push(route_index);
-            }
-            else{
-                //if the path leads to a dead end pop it
-                path.pop();
-            }
-        }
-        else{
-            correctPaths.push_back(stackIntoVector(path));
-            path.pop();
-        }
-    }
-    return correctPaths;
-}
-
-void firstScenario::getBestPath(vector<vector<int>> paths,vector<vector<struct Route>> nodes){
-    //Max capacity of the path
-    //Min capacity of the nodes of the path
-    int maxCapacity = -1,minCapacity;
-
-    // The best path, the one with the max capacity
-    vector<int> theChosenOne;
-    // CurrentPath and CurrentNode are auxiliary vars only to help code comprehension
-    for (int i = 0; i < paths.size(); i++) {
-        minCapacity = INT64_MAX;
-        auto currentPath = paths[i];
-        //Only iterating from 0 to size-1 since destination does not have capacity
-        for (int j = 0; j < currentPath.size()-1; j++) {
-            auto currentNode = currentPath[j];
-            if(nodes.at(currentNode).capacity() < minCapacity){
-                minCapacity = nodes.at(currentNode).capacity();
-                //Computing all nodes from each path and then get the smallest capacity of the path
-            }
-        }
-        //If the computed path has a bigger capacity than the previous one then the Chosen path will be updated
-        if(minCapacity>maxCapacity) {
-            maxCapacity = minCapacity;
-            theChosenOne = paths[i];
-        }
-    }
-
-    printSolution(theChosenOne,maxCapacity);
 }
 
 int firstScenario::checkIfContains(const vector<Vertex> &vector, int value) {
@@ -366,3 +417,18 @@ int firstScenario::getMin(int value1, int value2) {
     if(value1 < value2) return value1;
     return value2;
 }
+
+int firstScenario::getGroupSize(vector<int> &path, vector<vector<struct Route>> nodes) {
+    int minCapacity = INT32_MAX;
+    for (int j = 0; j < path.size()-1; j++) {
+        auto currentNode = path[j];
+        if(nodes.at(currentNode).capacity() < minCapacity){
+            minCapacity = nodes.at(currentNode).capacity();
+            //Computing all nodes from each path and then get the smallest capacity of the path
+        }
+    }
+    return minCapacity;
+}
+
+
+
