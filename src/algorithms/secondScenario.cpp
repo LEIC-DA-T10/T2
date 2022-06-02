@@ -104,7 +104,13 @@ void secondScenario::compute_2_2() {
 }
 
 void secondScenario::compute_2_3() {
+    vector<vector<Route>> nodes = safe_nodes;
+    vector<Vertex> vertices;
+    vertices = dijkstra(nodes, finalNode);
 
+    for(const auto& vertex : vertices){
+        cout << "Node ["<< vertex.index << "] distance : " << vertex.distance << endl;
+    }
 }
 
 void secondScenario::compute_2_4() {
@@ -192,3 +198,64 @@ int secondScenario::checkIfDestination(const vector<Route>& node, int destinatio
     }
     return FAILED_FLAG;
 }
+
+vector<Vertex> secondScenario::dijkstra(vector<vector<Route>> &nodes, int final) {
+    vector<Vertex> vertices;
+    vector<int> visited;
+    Vertex current_vertex;
+
+
+    //Compare Function used for the prio queue, sorts elements by distance
+    auto compare = [](Vertex &vertex1, Vertex &vertex2) { return vertex1.distance > vertex2.distance;};
+    priority_queue<Vertex,vector<Vertex>, decltype(compare) > priorityQueue(compare);
+
+    //copy elements from nodes vector and insert them into vertices
+    int counter = 0;
+    for(const auto& node : nodes){
+        Vertex vertex;
+        vertex.index = counter;
+        if(counter == 0)
+            vertex.distance = 0;
+        vertex.linked_vertex = node;
+        vertices.push_back(vertex);
+        counter++;
+    }
+    //adding final node;
+    current_vertex.index = counter;
+    vertices.push_back(current_vertex);
+
+    priorityQueue.push(vertices.at(0));
+    visited.push_back(0);
+
+    while (!priorityQueue.empty()){
+        current_vertex = priorityQueue.top();
+        priorityQueue.pop();
+        int alt = current_vertex.distance + 1;
+        if(current_vertex.index != final){
+            for(auto route : current_vertex.linked_vertex){
+                int destination = route.destination;
+                if(alt < vertices.at(destination).distance){
+                    vertices.at(destination).distance = alt;
+                    vertices.at(destination).source = current_vertex.index;
+                    if(vectorContains(visited,vertices.at(destination).index) == FAILED_FLAG){
+                        visited.push_back(vertices.at(destination).index);
+                        priorityQueue.push(vertices.at(destination));
+                    }
+                }
+            }
+        }
+    }
+
+    return vertices;
+}
+
+int secondScenario::vectorContains(vector<int> vector, int value) {
+    int counter = 0;
+    for(auto elem : vector){
+        if (elem == value) return counter;
+        counter++;
+    }
+    return FAILED_FLAG;
+}
+
+

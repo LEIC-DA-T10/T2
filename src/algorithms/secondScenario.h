@@ -24,6 +24,8 @@ private:
     static vector<int> stackIntoVector(stack<int> stack);
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
     static int checkIfDestination(const vector<Route>& node, int destination);
+    static vector<Vertex> dijkstra(vector<vector<Route>> &nodes, int final);
+    static int vectorContains(vector<int> vector, int value);
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
