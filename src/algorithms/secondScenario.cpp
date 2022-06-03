@@ -223,8 +223,6 @@ void secondScenario::findDetour(vector<vector<Route>> &nodes, vector<int> &path,
     stack<int> path2;
     vector<vector<int>> paths;
     vector<int> buffers;
-
-
     vector<int> okCheck = capacityCheck(nodes, path, newPassengers, maxFlow);
     buffer -= maxFlow; //os que sobraram
 
@@ -280,9 +278,6 @@ void secondScenario::findDetour(vector<vector<Route>> &nodes, vector<int> &path,
         cout << "New Passengers Fit" << endl; //update nodes capacity
     }
 }
-
-
-
 
 vector<int> secondScenario::capacityCheck(const vector<vector<Route>> &nodes, const vector<int> &path, int newPassengers, int &maxFlow){
     vector<int> okCheck;
