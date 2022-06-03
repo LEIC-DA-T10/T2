@@ -25,7 +25,7 @@ private:
     static vector<int> stackIntoVector(stack<int> stack);
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
     static int checkIfDestination(const vector<Route>& node, int destination);
-    static vector<Vertex> dijkstra(vector<Vertex> vertices, int final, int source);
+    static vector<Vertex> dijkstra(const vector<Vertex> &safe_vertices, int final, int source);
     static int vectorContains(vector<int> vector, int value);
     static int getMinimumCapacity(const vector<Vertex>& path);
     static vector<Vertex> increaseFlow(const vector<Vertex> & vertices_input, const vector<Vertex> & path, int value);

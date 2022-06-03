@@ -122,70 +122,22 @@ void secondScenario::compute_2_2() {
 void secondScenario::compute_2_3() {
     int source = 0;
     int sink = finalNode;
+    int maxGroup = 0;
     int minimumCapacity;
+    vector<pair<vector<Vertex>,int>> paths;
     vector<Vertex> vertices = safe_vertices;
     Vertex current_vertex;
 
 
-    vertices = safe_vertices;
-    vertices.at(source).distance = 0;
-    vector<Vertex> shortest_path;
-    //get shortest path from source to sink for all nodes
-    vertices = dijkstra(vertices, sink, source);
-
-    //insert shortest path from source to sink into a vector
-    current_vertex = vertices.at(sink);
-    while(true){
-        shortest_path.push_back(current_vertex);
-        if(current_vertex.index == source) break;
-        current_vertex = vertices.at(current_vertex.source);
-    }
-    reverse(shortest_path.begin(),shortest_path.end());
-
-    printPath(shortest_path);
-    //Gets minimum capacity for given path
-    minimumCapacity = getMinimumCapacity(shortest_path);
-    cout << "Min : " << minimumCapacity << endl;
-    //Increases the flow value by the given amount
-    vertices = increaseFlow(vertices,shortest_path,minimumCapacity);
-
-
-    //-------
-    shortest_path.clear();
-    //-------
-
-    vertices.at(source).distance = 0;
-    //get shortest path from source to sink for all nodes
-    vertices = dijkstra(vertices, sink, source);
-
-    //insert shortest path from source to sink into a vector
-    current_vertex = vertices.at(sink);
-    while(true){
-        shortest_path.push_back(current_vertex);
-        if(current_vertex.index == source) break;
-        current_vertex = vertices.at(current_vertex.source);
-    }
-    reverse(shortest_path.begin(),shortest_path.end());
-
-
-    printPath(shortest_path);
-    //Gets minimum capacity for given path
-    minimumCapacity = getMinimumCapacity(shortest_path);
-    cout << "Min : " << minimumCapacity << endl;
-    //Increases the flow value by the given amount
-    vertices = increaseFlow(vertices,shortest_path,minimumCapacity);
-
-
-
-    /*
     while(!vertices.empty()){
-        vertices = safe_vertices;
-        vertices.at(source).distance = 0;
         vector<Vertex> shortest_path;
         //get shortest path from source to sink for all nodes
         vertices = dijkstra(vertices, sink, source);
 
-        if(vertices.empty()) break;
+        //If last node is unreachable, break;
+        if(vertices.at(sink).distance == numeric_limits<int>::max()){
+            break;
+        }
 
         //insert shortest path from source to sink into a vector
         current_vertex = vertices.at(sink);
@@ -196,15 +148,27 @@ void secondScenario::compute_2_3() {
         }
         reverse(shortest_path.begin(),shortest_path.end());
 
-
-        printPath(shortest_path);
         //Gets minimum capacity for given path
         minimumCapacity = getMinimumCapacity(shortest_path);
-        cout << "Min : " << minimumCapacity << endl;
         //Increases the flow value by the given amount
-        increaseFlow(vertices,shortest_path,minimumCapacity);
+        vertices = increaseFlow(vertices,shortest_path,minimumCapacity);
+
+        //Setting output variables
+        maxGroup += minimumCapacity;
+        pair<vector<Vertex>,int> output;
+        output.first = shortest_path;
+        output.second = minimumCapacity;
+        paths.push_back(output);
     }
-     */
+
+    //Print Results
+    cout << "Found a path for a divisible group with the maximum size of [" << maxGroup << "]" << endl;
+    int counter = 1;
+    for(const auto& pair : paths){
+        cout << "Group " << counter << " with size [" << pair.second << "] :" << endl;
+        printPath(pair.first);
+        counter++;
+    }
 
 }
 
@@ -303,13 +267,21 @@ int secondScenario::checkIfDestination(const vector<Route>& node, int destinatio
     return FAILED_FLAG;
 }
 
-vector<Vertex> secondScenario::dijkstra(vector<Vertex> vertices, int final, int source) {
+vector<Vertex> secondScenario::dijkstra(const vector<Vertex> &safe_vertices, int final, int source) {
+    vector<Vertex> vertices = safe_vertices;
     vector<int> visited;
     Vertex current_vertex;
 
     //Compare Function used for the prio queue, sorts elements by distance
     auto compare = [](Vertex &vertex1, Vertex &vertex2) { return vertex1.distance > vertex2.distance;};
     priority_queue<Vertex,vector<Vertex>, decltype(compare) > priorityQueue(compare);
+
+    for(auto & elem : vertices){
+        elem.distance = numeric_limits<int>::max();
+        elem.source = -1;
+    }
+
+    vertices.at(source).distance = 0;
 
     priorityQueue.push(vertices.at(source));
     visited.push_back(source);
@@ -321,7 +293,7 @@ vector<Vertex> secondScenario::dijkstra(vector<Vertex> vertices, int final, int 
         if(current_vertex.index != final){
             for(auto route : current_vertex.linked_vertex){
                 //Verify if route still has flow left.
-                if(!route.saturated){
+                if(route.capacity > 0){
                     int destination = route.destination;
                     if(alt < vertices.at(destination).distance){
                         vertices.at(destination).distance = alt;
@@ -332,17 +304,11 @@ vector<Vertex> secondScenario::dijkstra(vector<Vertex> vertices, int final, int 
                         }
                     }
                 }
-                else{
-                    cout << "please, send help" << endl;
-                }
             }
         }
     }
 
-    //If last node is unreachable, then return an empty vector
-    if(vertices.at(final).index != final){
-        vertices.clear();
-    }
+
 
     return vertices;
 }
@@ -378,13 +344,7 @@ vector<Vertex> secondScenario::increaseFlow(const vector<Vertex> & vertices_inpu
         int counter = 0;
         for(auto route : node.linked_vertex){
             if(route.destination == nextNode.index){
-                vertices.at(node.index).linked_vertex.at(counter).flow += value;
-                if(vertices.at(node.index).linked_vertex.at(counter).flow >= vertices.at(node.index).linked_vertex.at(counter).capacity){
-                    //vertices.at(node.index).linked_vertex.erase(vertices.at(node.index).linked_vertex.begin()+counter);
-                    vertices.at(node.index).linked_vertex.at(counter).saturated = true;
-                    cout << "Flow : " << vertices.at(node.index).linked_vertex.at(counter).flow << endl;
-                    cout << "Route [" << vertices.at(node.index).index << "] -> [" << vertices.at(node.index).linked_vertex.at(counter).destination << "] is saturated." << endl;
-                }
+                vertices.at(node.index).linked_vertex.at(counter).capacity -= value;
                 break;
             }
             counter++;
