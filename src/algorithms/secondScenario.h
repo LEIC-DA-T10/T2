@@ -28,7 +28,7 @@ private:
     static vector<Vertex> dijkstra(vector<Vertex> vertices, int final, int source);
     static int vectorContains(vector<int> vector, int value);
     static int getMinimumCapacity(const vector<Vertex>& path);
-    static void increaseFlow(vector<Vertex>& vertices, const vector<Vertex> & path, int value);
+    static vector<Vertex> increaseFlow(const vector<Vertex> & vertices_input, const vector<Vertex> & path, int value);
 
     vector<Vertex> safe_vertices;
 public:
