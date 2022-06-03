@@ -62,8 +62,12 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
             for(auto & route : nodes.at(current_vertex.index)){
                 if(checkIfContains(visited_nodes,route.destination) == FAILED_FLAG){
                     route.source = current_vertex.index;
-
                     route.capacity = getMin(current_vertex.capacity,route.capacity);
+
+                    /*
+                     * Commented code, used for overwriting elements in prio queue, d
+                     * depreceated beacause we can simply re-insert elements with lower capacity
+                     * and they are ignored due to already being present in the visited array
 
                     queueBuffer.clear();
                     //Inserting priorityQueue elements into vector Buffer
@@ -82,6 +86,9 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
                     for(auto elem : queueBuffer){
                         priorityQueue.push(elem);
                     }
+                    */
+
+                    priorityQueue.push(route);
                 }
             }
         }
