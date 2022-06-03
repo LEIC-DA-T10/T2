@@ -97,6 +97,9 @@ void secondScenario::compute_2_1() {
             counter_b++;
         }
     }
+
+    
+
 }
 
 void secondScenario::compute_2_2() {
@@ -105,7 +108,7 @@ void secondScenario::compute_2_2() {
     vector<vector<int>> paths;
 
 
-    cout << "Group Size: " << endl;
+    cout << "Addition to Group Size: " << endl;
     cin >> groupSize;
     buffer = groupSize;
 
