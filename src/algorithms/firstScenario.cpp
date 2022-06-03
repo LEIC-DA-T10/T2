@@ -18,9 +18,9 @@ void firstScenario::compute() {
     printOptions();
     cin >> state;
     if(run(state)){
-        cout << "Finished Computing Scenario 1_" << state << "." << endl;
+        cout << "-*----------------------------------------------------*-" << endl;
+        cout << "           Finished Computing Scenario 1_" << state << "." << endl;
     }
-    cout << "-*----------------------------------------------------*-" << endl;
     cout << "               Exiting to main menu..." << endl;
 
 }
@@ -206,6 +206,7 @@ pair<int,vector<int>> firstScenario::getMinTransfers(vector<vector<int>> paths,c
             minTransfers = path.size();
             theChosenOne = path;
         }else if (path.size() == minTransfers && getGroupSize(theChosenOne,nodes) < getGroupSize(path,nodes)){
+            theChosenOne = path;
 
         }
     }
