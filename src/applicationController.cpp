@@ -50,15 +50,15 @@ void applicationController::printMainMenu(){
 void applicationController::readFixed() {
     char fileIndex;
     string newInputPath;
-    cout << "Choose which file to read from [1,10]"<< endl;
+    cout << "-*---------  Choose which file to read from [1,10] ---*-"<< endl;
     cin >> fileIndex;
     newInputPath = string(INPUT_PATH) + string("in") + fileIndex + string("_b.txt");
     data.setInputPath(newInputPath);
     if(data.readNodes()){
-        cout << "---- Finished reading data ----" << endl;
+        cout << "-*-------------  Finished reading data  --------------*-" << endl;
     }
     else{
-        cout << "------ Error opening file -----" << endl;
+        cout << "-*------------  [ERROR] Opening file  ---------------*-" << endl;
     }
 
 }
@@ -77,7 +77,7 @@ void applicationController::computeSecond() {
 
 bool applicationController::checkForEmpty(const map<int, vector<Route>> &vector){
     if(vector.empty()){
-        cout << "---- ERROR : You must read data before attempting this operation !!! ----" << endl;
+        cout << "-*-------------  [ERROR] Data not loaded  ------------*-" << endl;
         return true;
     }
     return false;
@@ -86,7 +86,7 @@ bool applicationController::checkForEmpty(const map<int, vector<Route>> &vector)
 void applicationController::printRoutes() {
     char answer;
     if(checkForEmpty(data.getNodes())) return;
-    cout << "Do you want to print the data to a file? (y/n)" << endl;
+        cout << "-*------------- Print the data to a file? (y/n)  -----*-" << endl;
     cin >> answer;
     data.printNodes(answer);
 }
