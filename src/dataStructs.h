@@ -11,6 +11,7 @@ struct Route{
     int capacity = -1;
     int duration = -1;
     bool visited = false;
+    bool saturated = false;
     int flow = 0;
 };
 

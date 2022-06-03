@@ -20,12 +20,17 @@ private:
     void compute_2_5();
     stack<int> findPathLazy(int groupSize, vector<vector<Route>> nodes);
     static void printPath(vector<int> path);
+    static void printPath(const vector<Vertex>& path);
     static int checkNode(int groupSize, vector<Route> &node);
     static vector<int> stackIntoVector(stack<int> stack);
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
     static int checkIfDestination(const vector<Route>& node, int destination);
-    static vector<Vertex> dijkstra(vector<vector<Route>> &nodes, int final, int source);
+    static vector<Vertex> dijkstra(vector<Vertex> vertices, int final, int source);
     static int vectorContains(vector<int> vector, int value);
+    static int getMinimumCapacity(const vector<Vertex>& path);
+    static void increaseFlow(vector<Vertex>& vertices, const vector<Vertex> & path, int value);
+
+    vector<Vertex> safe_vertices;
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
