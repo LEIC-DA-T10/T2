@@ -18,12 +18,14 @@ private:
     void compute_2_3();
     void compute_2_4();
     void compute_2_5();
-    stack<int> findPathLazy(int groupSize, vector<vector<Route>> nodes);
+    stack<int> findPathLazy(int groupSize, vector<vector<Route>> nodes, int start);
     static void printPath(vector<int> path);
     static int checkNode(int groupSize, vector<Route> &node);
     static vector<int> stackIntoVector(stack<int> stack);
     void blockPath(vector<vector<Route>> &nodes, const vector<int> &path, int groupSize);
     static int checkIfDestination(const vector<Route>& node, int destination);
+    vector<int> capacityCheck(const vector<vector<Route>> &nodes, const vector<int> &path, int newPassengers, int &maxFlow);
+    void findDetour(vector<vector<Route>> &nodes, vector<int> &path, int newPassengers);
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
