@@ -29,7 +29,7 @@ private:
     static int vectorContains(vector<int> vector, int value);
     static int getMinimumCapacity(const vector<Vertex>& path);
     static vector<Vertex> increaseFlow(const vector<Vertex> & vertices_input, const vector<Vertex> & path, int value);
-
+    void calculate_earliestStartFinish(vector<Vertex> &vertices, int source, int final);
     vector<Vertex> safe_vertices;
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);

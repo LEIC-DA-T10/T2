@@ -173,11 +173,28 @@ void secondScenario::compute_2_3() {
 }
 
 void secondScenario::compute_2_4() {
+    int source = 0;
+    int sink = finalNode;
+    vector<Vertex> vertices = safe_vertices;
+    Vertex current_vertex;
 
+    calculate_earliestStartFinish(vertices, source, sink);
+
+    /*
+    for(auto elem : vertices){
+        cout << elem.index << " " << elem.earliest_start << " " << elem.earliest_finish << endl;
+    }
+    */
+    cout << "The group will reunite, at the least, after " << vertices.at(sink).earliest_finish << " units of time." << endl;
 }
 
 void secondScenario::compute_2_5() {
+    int source = 0;
+    int sink = finalNode;
+    vector<Vertex> vertices = safe_vertices;
+    Vertex current_vertex;
 
+    calculate_earliestStartFinish(vertices, source, sink);
 }
 
 stack<int> secondScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
@@ -351,6 +368,40 @@ vector<Vertex> secondScenario::increaseFlow(const vector<Vertex> & vertices_inpu
         }
     }
     return vertices;
+}
+
+void secondScenario::calculate_earliestStartFinish(vector<Vertex> &vertices, int source, int final) {
+    vector<int> visited;
+    Vertex current_vertex;
+    queue<Vertex> queue;
+
+    for(auto & elem : vertices){
+        elem.earliest_finish = 0;
+        elem.source = -1;
+    }
+
+    queue.push(vertices.at(source));
+    visited.push_back(source);
+
+    while (!queue.empty()){
+        current_vertex = queue.front();
+        queue.pop();
+        int alt = current_vertex.earliest_finish;
+        for(auto route : current_vertex.linked_vertex){
+            int destination = route.destination;
+            alt += route.duration;
+            if(alt > vertices.at(destination).earliest_finish){
+                vertices.at(destination).earliest_finish = alt;
+                vertices.at(destination).earliest_start = alt - route.duration;
+                vertices.at(destination).source = current_vertex.index;
+                //If node is not inserted in visited node
+                if(vectorContains(visited,vertices.at(destination).index) == FAILED_FLAG){
+                    visited.push_back(vertices.at(destination).index);
+                    queue.push(vertices.at(destination));
+                }
+            }
+        }
+    }
 }
 
 

@@ -20,6 +20,8 @@ struct Vertex{
     int capacity{};
     int source = -1;
     int distance = std::numeric_limits<int>::max();
+    int earliest_finish = 0;
+    int earliest_start = 0;
     std::vector<Route> linked_vertex{};
 };
 
