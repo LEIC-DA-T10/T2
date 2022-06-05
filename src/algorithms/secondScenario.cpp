@@ -162,8 +162,11 @@ void secondScenario::compute_2_2() {
         cin >> groupSize;
 
         //check possible
-        for (int i=0; i, paths.size(); i++){
+
+        for (int i=0; i < paths.size(); i++){
+            cout << "0" << endl;
             mincap =getMinimumCapacityOG(nodes, paths[i]);
+            cout << "1" << endl;
             if ( mincap > 0 ){
                 if (mincap >= groupSize){
                     buffers[i]+= groupSize; //buffer
