@@ -122,46 +122,18 @@ void secondScenario::compute_2_2() {
 void secondScenario::compute_2_3() {
     int source = 0;
     int sink = finalNode;
-    int maxGroup = 0;
-    int minimumCapacity;
-    vector<pair<vector<Vertex>,int>> paths;
     vector<Vertex> vertices = safe_vertices;
     Vertex current_vertex;
+    vector<pair<vector<Vertex>,int>> paths;
 
+    int maxGroup = 0;
 
-    while(!vertices.empty()){
-        vector<Vertex> shortest_path;
-        //get shortest path from source to sink for all nodes
-        vertices = dijkstra(vertices, sink, source);
+    paths = getMaximumFlowPaths(vertices,source,sink);
 
-        //If last node is unreachable, break;
-        if(vertices.at(sink).distance == numeric_limits<int>::max()){
-            break;
-        }
-
-        //insert shortest path from source to sink into a vector
-        current_vertex = vertices.at(sink);
-        while(true){
-            shortest_path.push_back(current_vertex);
-            if(current_vertex.index == source) break;
-            current_vertex = vertices.at(current_vertex.source);
-        }
-        reverse(shortest_path.begin(),shortest_path.end());
-
-        //Gets minimum capacity for given path
-        minimumCapacity = getMinimumCapacity(shortest_path);
-        //Increases the flow value by the given amount
-        vertices = increaseFlow(vertices,shortest_path,minimumCapacity);
-
-        //Setting output variables
-        maxGroup += minimumCapacity;
-        pair<vector<Vertex>,int> output;
-        output.first = shortest_path;
-        output.second = minimumCapacity;
-        paths.push_back(output);
+    for(const auto& pair : paths){
+        maxGroup += pair.second;
     }
 
-    //Print Results
     cout << "Found a path for a divisible group with the maximum size of [" << maxGroup << "]" << endl;
     int counter = 1;
     for(const auto& pair : paths){
@@ -169,7 +141,6 @@ void secondScenario::compute_2_3() {
         printPath(pair.first);
         counter++;
     }
-
 }
 
 void secondScenario::compute_2_4() {
@@ -177,14 +148,18 @@ void secondScenario::compute_2_4() {
     int sink = finalNode;
     vector<Vertex> vertices = safe_vertices;
     Vertex current_vertex;
+    vector<pair<vector<Vertex>,int>> paths;
+
+    int maxGroup = 0;
+
+    paths = getMaximumFlowPaths(vertices,source,sink);
+
+    remove_paths(vertices);
+
+    recreate_paths(vertices,paths);
 
     calculate_earliestStartFinish(vertices, source, sink);
 
-    /*
-    for(auto elem : vertices){
-        cout << elem.index << " " << elem.earliest_start << " " << elem.earliest_finish << endl;
-    }
-    */
     cout << "The group will reunite, at the least, after " << vertices.at(sink).earliest_finish << " units of time." << endl;
 }
 
@@ -403,5 +378,87 @@ void secondScenario::calculate_earliestStartFinish(vector<Vertex> &vertices, int
         }
     }
 }
+
+vector<pair<vector<Vertex>, int>> secondScenario::getMaximumFlowPaths(vector<Vertex> &vertices, int source, int final) {
+    int sink = final;
+    int maxGroup = 0;
+    int minimumCapacity;
+    vector<pair<vector<Vertex>,int>> paths;
+    Vertex current_vertex;
+
+
+    while(!vertices.empty()){
+        vector<Vertex> shortest_path;
+        //get shortest path from source to sink for all nodes
+        vertices = dijkstra(vertices, sink, source);
+
+        //If last node is unreachable, break;
+        if(vertices.at(sink).distance == numeric_limits<int>::max()){
+            break;
+        }
+
+        //insert shortest path from source to sink into a vector
+        current_vertex = vertices.at(sink);
+        while(true){
+            shortest_path.push_back(current_vertex);
+            if(current_vertex.index == source) break;
+            current_vertex = vertices.at(current_vertex.source);
+        }
+        reverse(shortest_path.begin(),shortest_path.end());
+
+        //Gets minimum capacity for given path
+        minimumCapacity = getMinimumCapacity(shortest_path);
+        //Increases the flow value by the given amount
+        vertices = increaseFlow(vertices,shortest_path,minimumCapacity);
+
+        //Setting output variables
+        maxGroup += minimumCapacity;
+        pair<vector<Vertex>,int> output;
+        output.first = shortest_path;
+        output.second = minimumCapacity;
+        paths.push_back(output);
+    }
+
+    return paths;
+}
+
+void secondScenario::remove_paths(vector<Vertex> &vertices) {
+    for(auto vertex : vertices){
+        vertex.linked_vertex.clear();
+    }
+}
+
+void secondScenario::recreate_paths(vector<Vertex> &vertices, const vector<pair<vector<Vertex>, int>>& paths) {
+    for(const auto & elem : paths){
+        auto path = elem.first;
+        for(const auto & vertex : path){
+            append_vector(vertices.at(vertex.index).linked_vertex,vertex.linked_vertex);
+        }
+    }
+}
+
+void secondScenario::append_vector(vector<Route> &destination, const vector<Route> &source) {
+    for(auto elem : source){
+        vectorContainsRoute(destination,elem);
+    }
+}
+
+void secondScenario::vectorContainsRoute(vector<Route> &vector, Route route) {
+    for(auto elem : vector){
+        //Found route with same destination
+        if (elem.destination == route.destination){
+            if(elem.capacity < route.capacity){
+                elem.capacity = route.capacity;
+                return;
+            }
+        }
+    }
+    vector.push_back(route);
+}
+
+void secondScenario::calculate_latestStartFinish(vector<Vertex> &vertices, int source, int final) {
+
+}
+
 
 
