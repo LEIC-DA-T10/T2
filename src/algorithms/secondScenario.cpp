@@ -125,6 +125,119 @@ void secondScenario::compute_2_1(int input) {
 
 void secondScenario::compute_2_2() {
 
+    int groupSize,buffer,counter = 1, mincap;
+    vector<vector<Route>> nodes = safe_nodes;
+    vector<vector<int>> paths;
+    vector<int> buffers;
+    stack<int> path2;
+
+    cout << "Group Size: " << endl;
+    cin >> groupSize;
+    buffer = groupSize;
+
+    while(buffer > 0){
+        stack<int> path = findPathLazy(buffer, nodes);
+        if(!path.empty()){
+            vector<int> vectorPath = stackIntoVector(path);
+            paths.push_back(vectorPath);
+            buffers.push_back(buffer);
+            blockPath(nodes, vectorPath, buffer);
+            groupSize -= buffer;
+            buffer = groupSize;
+            counter++;
+        }
+        else{
+            buffer--;
+        }
+    }
+
+    if(groupSize > 0){
+        cout << "Could not find a path for the given group size" << endl;
+    }
+    else{
+            int counter_b = 0;
+            for(const auto& path : paths){
+                cout << "Found path for subgroup [" << counter_b+1 << "] with size [" << buffers.at(counter_b) <<"]"<< endl;
+                printPath(path);
+                counter_b++;
+            }
+    }
+    // THIS IS WHERE 2.2 is
+    cout << "2.2 Would you like to add more people ? 1-Yes 2-No"<< endl;
+    cin >> groupSize ;
+    if (groupSize ==1){
+        cout << "How many people would you like to add ? " << endl;
+        cin >> groupSize;
+
+        //check possible
+
+        for (int i=0; i < paths.size(); i++){
+            cout << "0" << endl;
+            mincap =getMinimumCapacityOG(nodes, paths[i]);
+            cout << "1" << endl;
+            if ( mincap > 0 ){
+                if (mincap >= groupSize){
+                    buffers[i]+= groupSize; //buffer
+                    blockPath(nodes, paths[i], groupSize);
+                    groupSize =0;
+                    //add all the people in groupsize
+                }
+                else{
+                    buffers[i]+=mincap; //buffer
+                    blockPath(nodes, paths[i], mincap);
+                    groupSize -= mincap;
+                }
+
+            }
+            if (groupSize <=0) break;
+        }
+
+        if (groupSize <=0) {
+            int counter_b =0;
+            for(const auto& path : paths){
+                cout << "Found path for subgroup [" << counter_b+1 << "] with size [" << buffers.at(counter_b) <<"]"<< endl;
+            printPath(path);
+            counter_b++;
+            }
+        }
+
+        else{
+            cout << endl <<"No existing path found, looking for new direction...."<< endl;
+            buffer = groupSize;
+
+            while(buffer > 0){
+                path2.empty();
+                path2 = findPathLazy(buffer, nodes); //findAlternativePathLazy(buffer, nodes,)
+                if(!path2.empty()){
+                    vector<int> vectorPath2 = stackIntoVector(path2);
+                    paths.push_back(vectorPath2);
+                    buffers.push_back(buffer);
+                    blockPath(nodes, vectorPath2, buffer); //verify group size
+                    groupSize -= buffer;
+                    buffer = groupSize;
+                    counter++;
+                }
+                else{
+                    buffer--;
+                }
+            }
+
+            if(groupSize > 0){
+                cout << "Could not find a path for the given group size" << endl;
+            }
+            else{
+                int counter_b = 0;
+                for(const auto& path : paths){
+                    cout << "Found path for subgroup [" << counter_b+1 << "] with size [" << buffers.at(counter_b) <<"]"<< endl;
+                    printPath(path);
+                    counter_b++;
+                }
+            }
+        }
+    }
+    else{
+        cout << "Thank You!" << endl;
+    }
 }
 
 void secondScenario::compute_2_3() {
@@ -351,6 +464,20 @@ int secondScenario::getMinimumCapacity(const vector<Vertex> &path) {
         nextNode = path.at(i+1);
         for(const auto& route : node.linked_vertex){
             if(route.destination == nextNode.index && route.capacity < min) min = route.capacity;
+        }
+    }
+    return min;
+}
+
+
+int secondScenario::getMinimumCapacityOG(const vector<vector<Route>> &nodes, const vector<int> &path) {
+    int index, node, nextNode;
+    int min = numeric_limits<int>::max();
+    for(int i = 0; i < path.size()-1; i++){
+        node = path.at(i);
+        nextNode = path.at(i+1);
+        for(const auto& route : nodes[node]){
+            if(route.destination == nextNode && route.capacity < min) min = route.capacity;
         }
     }
     return min;

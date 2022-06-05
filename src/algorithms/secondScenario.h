@@ -40,6 +40,7 @@ private:
     static Route reverseRoute(const Route &route);
     static int calculate_freeTime(vector<Vertex> &vertices);
     void printComputationTime(std::chrono::duration<double> elapsed_seconds, long long int end_time);
+    int getMinimumCapacityOG(const vector<vector<Route>> &nodes, const vector<int> &path);
 
     vector<Vertex> safe_vertices;
 public:
