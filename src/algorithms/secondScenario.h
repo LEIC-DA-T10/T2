@@ -29,6 +29,7 @@ private:
     static int vectorContains(vector<int> vector, int value);
     static int getMinimumCapacity(const vector<Vertex>& path);
     static vector<Vertex> increaseFlow(const vector<Vertex> & vertices_input, const vector<Vertex> & path, int value);
+    int getMinimumCapacityOG(const vector<vector<Route>> &nodes, const vector<int> &path);
 
     vector<Vertex> safe_vertices;
 public:
