@@ -11,7 +11,6 @@ struct Route{
     int capacity = -1;
     int duration = -1;
     bool visited = false;
-    bool saturated = false;
     int flow = 0;
 };
 
@@ -24,6 +23,7 @@ struct Vertex{
     int earliest_start = 0;
     int latest_start = 0;
     int latest_finish = 0;
+    int free_time = 0;
     std::vector<Route> prev_vertex{};
     std::vector<Route> linked_vertex{};
 };

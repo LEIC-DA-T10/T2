@@ -36,7 +36,8 @@ private:
     static void append_vector(vector<Route> & destination, const vector<Route> & source);
     static void vectorContainsRoute(vector<Route> &vector, Route route);
     static void calculate_latestStartFinish(vector<Vertex> &vertices, int source, int final);
-    static Route findRouteAt(const Vertex& vertex, int destination);
+    static Route reverseRoute(const Route &route);
+    static int calculate_freeTime(vector<Vertex> &vertices);
     vector<Vertex> safe_vertices;
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);

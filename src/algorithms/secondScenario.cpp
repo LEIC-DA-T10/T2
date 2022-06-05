@@ -162,8 +162,8 @@ void secondScenario::compute_2_4() {
 }
 
 void secondScenario::compute_2_5() {
-    int source = 0;
-    int sink = finalNode;
+    int source = 0,sink = finalNode,total;
+
     vector<Vertex> vertices = safe_vertices;
     Vertex current_vertex;
     vector<pair<vector<Vertex>,int>> paths;
@@ -176,13 +176,21 @@ void secondScenario::compute_2_5() {
 
     calculate_earliestStartFinish(vertices, source, sink);
 
-    cout << endl << endl << endl;
-
     calculate_latestStartFinish(vertices, sink, source);
 
-    for(auto vertex : vertices){
-        cout << vertex.latest_finish << endl;
+    total = calculate_freeTime(vertices);
+
+    cout << "In total the group will wait [" << total << "] units of time." << endl;
+
+    if(total > 0){
+        cout << "Wait per node : " << endl;
+        for(const auto& vertex : vertices){
+            if(vertex.free_time > 0){
+                cout << "At Node [" << vertex.index << "] the group will wait [" << vertex.free_time << "] units of time." << endl;
+            }
+        }
     }
+
 }
 
 stack<int> secondScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
@@ -449,6 +457,12 @@ void secondScenario::recreate_paths(vector<Vertex> &vertices, const vector<pair<
             append_vector(vertices.at(vertex.index).linked_vertex,vertex.linked_vertex);
         }
     }
+    //Add reverse paths
+    for(const auto & vertex : vertices){
+        for(const auto & linked : vertex.linked_vertex){
+            vertices.at(linked.destination).prev_vertex.push_back(reverseRoute(linked));
+        }
+    }
 }
 
 void secondScenario::append_vector(vector<Route> &destination, const vector<Route> &source) {
@@ -474,7 +488,6 @@ void secondScenario::calculate_latestStartFinish(vector<Vertex> &vertices, int s
     vector<int> visited;
     Vertex current_vertex;
     queue<Vertex> queue;
-    Route route;
 
     for(auto & elem : vertices){
         elem.latest_finish = numeric_limits<int>::max();
@@ -482,22 +495,23 @@ void secondScenario::calculate_latestStartFinish(vector<Vertex> &vertices, int s
     }
 
     vertices.at(source).latest_finish = vertices.at(source).earliest_finish;
+    vertices.at(source).latest_start = vertices.at(source).earliest_start;
 
     queue.push(vertices.at(source));
     visited.push_back(source);
 
     while (!queue.empty()){
         current_vertex = queue.front();
-        cout << "VERTEX : " << current_vertex.index << endl;
         queue.pop();
-        if(current_vertex.index != final){
-            int alt = current_vertex.latest_finish;
-            int destination = current_vertex.source;
-            route = findRouteAt(vertices.at(destination), current_vertex.index);
+        int alt = current_vertex.latest_finish;
+        for(auto route : current_vertex.prev_vertex){
+            int destination = route.destination;
             alt -= route.duration;
+            if (alt < 0) alt = 0;
             if(alt < vertices.at(destination).latest_finish){
                 vertices.at(destination).latest_finish = alt;
                 vertices.at(destination).latest_start = alt - route.duration;
+                vertices.at(destination).source = current_vertex.index;
                 //If node is not inserted in visited node
                 if(vectorContains(visited,vertices.at(destination).index) == FAILED_FLAG){
                     visited.push_back(vertices.at(destination).index);
@@ -506,14 +520,27 @@ void secondScenario::calculate_latestStartFinish(vector<Vertex> &vertices, int s
             }
         }
     }
-
 }
 
-Route secondScenario::findRouteAt(const Vertex& vertex, int destination) {
-    for(auto elem : vertex.linked_vertex){
-        if(elem.destination == destination) return elem;
+Route secondScenario::reverseRoute(const Route &route) {
+    Route reversed_route;
+    reversed_route.destination = route.source;
+    reversed_route.source = route.destination;
+    reversed_route.capacity = route.capacity;
+    reversed_route.duration = route.duration;
+    reversed_route.flow = route.flow;
+    return reversed_route;
+}
+
+int secondScenario::calculate_freeTime(vector<Vertex> &vertices) {
+    int total = 0;
+    for(auto & vertex : vertices){
+        if((vertex.latest_start - vertex.earliest_start) > 0){
+            vertex.free_time = vertex.latest_start - vertex.earliest_start;
+            total += vertex.free_time;
+        }
     }
-    return {};
+    return total;
 }
 
 

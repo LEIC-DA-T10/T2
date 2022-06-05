@@ -362,12 +362,7 @@ void firstScenario::printSolution(vector<int> path,int maxCapacity){
     printPath(std::move(path));
 }
 
-void firstScenario::printComputationTime(chrono::duration<double> elapsed_seconds, time_t end_time) {
-    cout << "-*-------------  Computation Time --------------------------*-" << endl;
-    cout << " |--> Time Details: " << endl;
-    cout << " |        Elapsed Time: " << elapsed_seconds.count() << "s" << endl;
-    cout << " |        Finished Computation At: " << std::ctime(&end_time);
-}
+
 
 void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes){
     char option;
@@ -519,6 +514,13 @@ int firstScenario::getGroupSize(vector<int> &path, vector<vector<struct Route>> 
         }
     }
     return minCapacity;
+}
+
+void firstScenario::printComputationTime(std::chrono::duration<double> elapsed_seconds, long long int end_time) {
+    cout << "-*-------------  Computation Time --------------------------*-" << endl;
+    cout << " |--> Time Details: " << endl;
+    cout << " |        Elapsed Time: " << elapsed_seconds.count() << "s" << endl;
+    cout << " |        Finished Computation At: " << std::ctime(reinterpret_cast<const time_t *>(&end_time));
 }
 
 
