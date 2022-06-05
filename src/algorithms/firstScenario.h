@@ -7,10 +7,12 @@
 #define FAILED_FLAG -1000
 
 #include <stack>
+#include <chrono>
 #include "../abstractAlgorithm.h"
 
 class firstScenario : abstractAlgorithm{
 public:
+
     explicit firstScenario(const map<int, vector<Route>> &nodes);
     void compute() override;
 
@@ -48,7 +50,7 @@ public:
 
     static void printSolution(vector<int> path, int maxCapacity);
 
-    static void printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes);
+    void printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes);
 
     static int getGroupSize(vector<int> &path, vector<vector<struct Route>> nodes);
 
@@ -56,5 +58,7 @@ public:
 
     static vector<vector<int>>
     getSimilarPaths(vector<vector<int>> paths, const vector<vector<struct Route>>& nodes, vector<int> pathToCompare);
+
+    void printComputationTime(std::chrono::duration<double> elapsed_seconds, long long int end_time);
 };
 #endif //DA_T1_FIRSTSCENARIO_H
