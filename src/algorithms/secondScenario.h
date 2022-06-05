@@ -30,6 +30,12 @@ private:
     static int getMinimumCapacity(const vector<Vertex>& path);
     static vector<Vertex> increaseFlow(const vector<Vertex> & vertices_input, const vector<Vertex> & path, int value);
     void calculate_earliestStartFinish(vector<Vertex> &vertices, int source, int final);
+    static vector<pair<vector<Vertex>,int>> getMaximumFlowPaths(vector<Vertex> &vertices, int source, int final);
+    static void remove_paths(vector<Vertex> &vertices);
+    static void recreate_paths(vector<Vertex> & vertices, const vector<pair<vector<Vertex>,int>>& paths);
+    static void append_vector(vector<Route> & destination, const vector<Route> & source);
+    static void vectorContainsRoute(vector<Route> &vector, Route route);
+    static void calculate_latestStartFinish(vector<Vertex> &vertices, int source, int final);
     vector<Vertex> safe_vertices;
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);
