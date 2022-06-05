@@ -9,7 +9,8 @@
 #include <bits/stdc++.h>
 #include <stack>
 #include <utility>
-
+#include <chrono>
+auto start = std::chrono::system_clock::now();
 firstScenario::firstScenario(const map<int, vector<Route>> &nodes) : abstractAlgorithm(nodes){}
 
 //Main Computing Function
@@ -26,13 +27,22 @@ void firstScenario::compute() {
 }
 
 void firstScenario::compute_1_1() {
+
+    auto start = std::chrono::system_clock::now();
+
     vector<vector<Route>> nodes = safe_nodes;
     pair<int,vector<int>> output;
 
     output = elephant_algorithm(nodes);
 
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
     cout << "Found Maximum Group Size [" << output.first << "] with the following path: " << endl;
     printSolution(output.second,output.first);
+
+    printComputationTime(elapsed_seconds,end_time);
 }
 
 pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> nodes){
@@ -99,7 +109,6 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
         visited_nodes.push_back(current_vertex);
     }
 
-
     path.push_back(visited_nodes.back().index);
     next = visited_nodes.back().source;
     max = visited_nodes.back().capacity;
@@ -123,6 +132,8 @@ pair<int, vector<int>> firstScenario::elephant_algorithm(vector<vector<Route>> n
 }
 
 void firstScenario::compute_1_2() {
+     start = std::chrono::system_clock::now();
+
     // Copy of data input
     vector<vector<Route>> nodes = safe_nodes;
     // Vector to Store paths
@@ -259,6 +270,8 @@ pair<int,vector<int>> firstScenario::getBiggestGroupSize(const vector<vector<int
 
 }
 
+
+
 stack<int> firstScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
     stack<int> path;
     int node_index = 0;
@@ -349,6 +362,13 @@ void firstScenario::printSolution(vector<int> path,int maxCapacity){
     printPath(std::move(path));
 }
 
+void firstScenario::printComputationTime(chrono::duration<double> elapsed_seconds, time_t end_time) {
+    cout << "-*-------------  Computation Time --------------------------*-" << endl;
+    cout << " |--> Time Details: " << endl;
+    cout << " |        Elapsed Time: " << elapsed_seconds.count() << "s" << endl;
+    cout << " |        Finished Computation At: " << std::ctime(&end_time);
+}
+
 void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector<Route>>& nodes){
     char option;
     sort( paths.begin(), paths.end());
@@ -363,6 +383,8 @@ void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector
     vector<vector<int>> simSize = getSimilarPaths(paths,nodes,MaxSize.second);
     vector<vector<int>> simTrans = getSimilarPaths(paths,nodes,MinTrans.second);
     vector<vector<int>> simRatio = getSimilarPaths(paths,nodes,BestRatio.second);
+
+
 
     cout << "-*-------------  Scenario Report  --------------------------*-" << endl;
     cout << " | [Found " << paths.size() << " path(s)]"<< endl;
@@ -418,9 +440,18 @@ void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector
             printPath(path);
         }
     }
+
     cout << " | "<< endl;
+    cout << " | "<< endl;
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+
     cout << " |-->No other Pareto Optimal solutions were found."<< endl;
     cout << " |-->Do you wish to see all paths?: (y/n)"<< endl;
+    
     cin >> option;
     if(option == 'y'){
         for(const auto& path : paths){
@@ -428,6 +459,7 @@ void firstScenario::printSolution(vector<vector<int>> paths, const vector<vector
             printPath(path);
         }
     }
+    printComputationTime(elapsed_seconds,end_time);
 }
 
 void firstScenario::printPath(vector<int> path){
