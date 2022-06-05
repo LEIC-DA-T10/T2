@@ -150,8 +150,6 @@ void secondScenario::compute_2_4() {
     Vertex current_vertex;
     vector<pair<vector<Vertex>,int>> paths;
 
-    int maxGroup = 0;
-
     paths = getMaximumFlowPaths(vertices,source,sink);
 
     remove_paths(vertices);
@@ -168,8 +166,23 @@ void secondScenario::compute_2_5() {
     int sink = finalNode;
     vector<Vertex> vertices = safe_vertices;
     Vertex current_vertex;
+    vector<pair<vector<Vertex>,int>> paths;
+
+    paths = getMaximumFlowPaths(vertices,source,sink);
+
+    remove_paths(vertices);
+
+    recreate_paths(vertices,paths);
 
     calculate_earliestStartFinish(vertices, source, sink);
+
+    cout << endl << endl << endl;
+
+    calculate_latestStartFinish(vertices, sink, source);
+
+    for(auto vertex : vertices){
+        cout << vertex.latest_finish << endl;
+    }
 }
 
 stack<int> secondScenario::findPathLazy(int groupSize, vector<vector<Route>> nodes) {
@@ -352,6 +365,7 @@ void secondScenario::calculate_earliestStartFinish(vector<Vertex> &vertices, int
 
     for(auto & elem : vertices){
         elem.earliest_finish = 0;
+        elem.earliest_start = 0;
         elem.source = -1;
     }
 
@@ -457,8 +471,51 @@ void secondScenario::vectorContainsRoute(vector<Route> &vector, Route route) {
 }
 
 void secondScenario::calculate_latestStartFinish(vector<Vertex> &vertices, int source, int final) {
+    vector<int> visited;
+    Vertex current_vertex;
+    queue<Vertex> queue;
+    Route route;
+
+    for(auto & elem : vertices){
+        elem.latest_finish = numeric_limits<int>::max();
+        elem.latest_start = numeric_limits<int>::max();
+    }
+
+    vertices.at(source).latest_finish = vertices.at(source).earliest_finish;
+
+    queue.push(vertices.at(source));
+    visited.push_back(source);
+
+    while (!queue.empty()){
+        current_vertex = queue.front();
+        cout << "VERTEX : " << current_vertex.index << endl;
+        queue.pop();
+        if(current_vertex.index != final){
+            int alt = current_vertex.latest_finish;
+            int destination = current_vertex.source;
+            route = findRouteAt(vertices.at(destination), current_vertex.index);
+            alt -= route.duration;
+            if(alt < vertices.at(destination).latest_finish){
+                vertices.at(destination).latest_finish = alt;
+                vertices.at(destination).latest_start = alt - route.duration;
+                //If node is not inserted in visited node
+                if(vectorContains(visited,vertices.at(destination).index) == FAILED_FLAG){
+                    visited.push_back(vertices.at(destination).index);
+                    queue.push(vertices.at(destination));
+                }
+            }
+        }
+    }
 
 }
+
+Route secondScenario::findRouteAt(const Vertex& vertex, int destination) {
+    for(auto elem : vertex.linked_vertex){
+        if(elem.destination == destination) return elem;
+    }
+    return {};
+}
+
 
 
 

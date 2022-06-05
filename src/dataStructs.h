@@ -22,6 +22,9 @@ struct Vertex{
     int distance = std::numeric_limits<int>::max();
     int earliest_finish = 0;
     int earliest_start = 0;
+    int latest_start = 0;
+    int latest_finish = 0;
+    std::vector<Route> prev_vertex{};
     std::vector<Route> linked_vertex{};
 };
 
