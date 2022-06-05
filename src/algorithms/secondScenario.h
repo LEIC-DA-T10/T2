@@ -8,12 +8,13 @@
 #include "../abstractAlgorithm.h"
 #include <iostream>
 #include <stack>
+#include <chrono>
 
 class secondScenario : abstractAlgorithm{
 private:
     static void printOptions();
     bool run(int state);
-    void compute_2_1();
+    void compute_2_1(int input);
     void compute_2_2();
     void compute_2_3();
     void compute_2_4();
@@ -38,6 +39,8 @@ private:
     static void calculate_latestStartFinish(vector<Vertex> &vertices, int source, int final);
     static Route reverseRoute(const Route &route);
     static int calculate_freeTime(vector<Vertex> &vertices);
+    void printComputationTime(std::chrono::duration<double> elapsed_seconds, long long int end_time);
+
     vector<Vertex> safe_vertices;
 public:
     explicit secondScenario(const map<int, vector<Route>> &nodes);

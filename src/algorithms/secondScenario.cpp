@@ -55,35 +55,43 @@ void secondScenario::printOptions(){
 }
 
 bool secondScenario::run(int state) {
+    auto start = std::chrono::system_clock::now();
+    int input;
     switch (state) {
         case 1:
-            compute_2_1();
-            return true;
+            cout << "Group Size : " << endl;
+            cin >> input;
+            start = std::chrono::system_clock::now();
+            compute_2_1(input);
+            break;
         case 2:
             compute_2_2();
-            return true;
+            break;
         case 3:
             compute_2_3();
-            return true;
+            break;
         case 4:
             compute_2_4();
-            return true;
+            break;
         case 5:
             compute_2_5();
-            return true;
-        default:
-            return false;
+            break;
     }
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    printComputationTime(elapsed_seconds,end_time);
+
+    return true;
 }
 
-void secondScenario::compute_2_1() {
-    int groupSize,buffer,counter = 1;
+void secondScenario::compute_2_1(int input) {
+    int groupSize = input,buffer,counter = 1;
     vector<vector<Route>> nodes = safe_nodes;
     vector<vector<int>> paths;
     vector<int> buffers;
 
-    cout << "Group Size: " << endl;
-    cin >> groupSize;
     buffer = groupSize;
 
     while(buffer > 0){
@@ -543,6 +551,12 @@ int secondScenario::calculate_freeTime(vector<Vertex> &vertices) {
     return total;
 }
 
+void secondScenario::printComputationTime(std::chrono::duration<double> elapsed_seconds, long long int end_time) {
+    cout << "-*-------------  Computation Time --------------------------*-" << endl;
+    cout << " |--> Time Details: " << endl;
+    cout << " |        Elapsed Time: " << elapsed_seconds.count() << "s" << endl;
+    cout << " |        Finished Computation At: " << std::ctime(reinterpret_cast<const time_t *>(&end_time));
+}
 
 
 

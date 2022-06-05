@@ -50,7 +50,7 @@ void applicationController::printMainMenu(){
 void applicationController::readFixed() {
     char fileIndex;
     string newInputPath;
-    cout << "-*---------  Choose which file to read from [1,10] ---*-"<< endl;
+    cout << "-*---------  Choose which file to read from [1,9] ---*-"<< endl;
     cin >> fileIndex;
     newInputPath = string(INPUT_PATH) + string("in") + fileIndex + string("_b.txt");
     data.setInputPath(newInputPath);
