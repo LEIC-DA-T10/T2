@@ -57,6 +57,7 @@ void secondScenario::printOptions(){
 bool secondScenario::run(int state) {
     auto start = std::chrono::system_clock::now();
     int input;
+    bool flag = false;
     switch (state) {
         case 1:
             cout << "Group Size : " << endl;
@@ -65,6 +66,7 @@ bool secondScenario::run(int state) {
             compute_2_1(input);
             break;
         case 2:
+            flag = true;
             compute_2_2();
             break;
         case 3:
@@ -77,11 +79,13 @@ bool secondScenario::run(int state) {
             compute_2_5();
             break;
     }
+    if(!flag){
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+        printComputationTime(elapsed_seconds,end_time);
+    }
 
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    printComputationTime(elapsed_seconds,end_time);
 
     return true;
 }
@@ -162,19 +166,27 @@ void secondScenario::compute_2_2() {
                 counter_b++;
             }
     }
+
+
     // THIS IS WHERE 2.2 is
     cout << "2.2 Would you like to add more people ? 1-Yes 2-No"<< endl;
     cin >> groupSize ;
+
+    auto start2 = std::chrono::system_clock::now();
+
     if (groupSize ==1){
         cout << "How many people would you like to add ? " << endl;
         cin >> groupSize;
 
         //check possible
 
+        start2 = std::chrono::system_clock::now();
+
+
         for (int i=0; i < paths.size(); i++){
-            cout << "0" << endl;
+
             mincap =getMinimumCapacityOG(nodes, paths[i]);
-            cout << "1" << endl;
+
             if ( mincap > 0 ){
                 if (mincap >= groupSize){
                     buffers[i]+= groupSize; //buffer
@@ -238,6 +250,10 @@ void secondScenario::compute_2_2() {
     else{
         cout << "Thank You!" << endl;
     }
+    auto end2 = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds2 = end2-start2;
+    std::time_t end_time2 = std::chrono::system_clock::to_time_t(end2);
+    printComputationTime(elapsed_seconds2,end_time2);
 }
 
 void secondScenario::compute_2_3() {
