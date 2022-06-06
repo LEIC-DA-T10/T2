@@ -1,5 +1,5 @@
-# [Logística Urbana para Entrega de Mercadorias]
-> First delivery for the subject "Developing Algorithms"
+# [Agência de Viagenss]
+> Second delivery for the subject "Developing Algorithms"
 
 ## Compilation Instructions
 
@@ -9,7 +9,7 @@ The user should use Cmake to compile their program. Either download the already 
 cmake_minimum_required(VERSION 3.15)
 project(DA_T1)
 
-add_executable(main src/main.cpp src/dataIO.cpp src/dataIO.h src/dataStructs.h src/applicationController.cpp src/applicationController.h src/abstractAlgorithm.cpp src/abstractAlgorithm.h src/algorithms/firstScenario.cpp src/algorithms/firstScenario.h src/algorithms/secondScenario.cpp src/algorithms/secondScenario.h src/algorithms/thirdScenario.cpp src/algorithms/thirdScenario.h src/deprecated/thirdScenario_.cpp src/deprecated/thirdScenario_.h)
+add_executable(main src/main.cpp src/dataIO.cpp src/dataIO.h src/dataStructs.h src/applicationController.cpp src/applicationController.h src/abstractAlgorithm.cpp src/abstractAlgorithm.h src/algorithms/firstScenario.cpp src/algorithms/firstScenario.h src/algorithms/secondScenario.cpp src/algorithms/secondScenario.h)
 
 ```
 
@@ -24,39 +24,25 @@ When the user executes the program, they are greeted by a main menu.
 ### Functionalities
 
 * 1 - Reading Fixed data from the dataset.
-* 2 - Reading Random data from the dataset.
-* 3 - Compute Scenario 1
-    * 3.1 - No Sorting
-    * 3.2 - Sort By Weight
-    * 3.3 - Sort By Volume  
-    * 3.4 - Sort By Time
-    * 3.5 - Sort by best option
-* 4 - Compute Scenario 2
-    * 4.1 - Compute Greedy
-        * 4.1.1 - Export Truck Distribution to File
-        * 4.1.2 - See Truck Distribution Details
-    * 4.2 - Compute Backtracking
-* 5 - Compute Scenario 3
-    * 5.1 - Compute Greedy
-        * 5.1.1 - See Truck Distribution Details
-    * 5.2 - Compute Backtracking
-* 6 - Print Read Request Data
-    * 6.1 - Print to a file
-    * 6.2 - Print to terminal
-* 7 - Print Read Truck Data
-    * 7.1 - Print to a file
-    * 7.2 - Print to terminal
-* 8 - Compare Scenario 2 Algorithms
-    * 8.1 - Choose Number of Iterations
+* 2 - Compute Scenario 1
+    * 2.1 - Max Flow
+    * 2.2 - Max Flow, Min Transfers,Pareo-Optimal Solutions
+* 3 - Compute Scenario 2
+    * 3.1 - Find Path given Group Size
+    * 3.2 - Fix path
+    * 3.3 - Max Group Size and Path
+    * 3.4 - Find meting time
+    * 3.5 - Max waiting time
+* 4 - Print Routes
 
 ## Dependencies
-> The program requires the existance of 2 dataset files to read from (**carrinhas.txt** and **encomendas.txt**). These should be located in the **data/input/** folder, starting from the root of your project. 
+> The program requires the existance of 10 dataset files to read from (** in[1-9]_b.txt **). These should be located in the **input/** folder, starting from the root of your project. 
 
-> Output files are written to the **data/output/** file from the root of your project. 
+> Output files are written to the **output/** file from the root of your project. 
 
 ## GitHub Repository
 
-The project was developed using github, the link to the repository can be found [here](https://github.com/LEIC-DA-T10/T1)
+The project was developed using github, the link to the repository can be found [here](https://github.com/LEIC-DA-T10/T2)
 
 # Self-Avaluation
  * 33% [(@InsertNamePls) | 202005827 | José Carvalho](https://github.com/InsertNamePls) 
